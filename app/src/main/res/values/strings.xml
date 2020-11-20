@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Beauty Shop</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="menu_wallet">Wallet</string>
+    <string name="menu_branch_list">Branches</string>
+    <string name="menu_employee_list">Employees</string>
+    <string name="menu_collections">Collections</string>
+
+    <string name="menu_contact">Contact</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_logout">Logout</string>
+
+
+    <string name="text_phone_number">Phone Number</string>
+    <string name="text_name">Name</string>
+    <string name="text_phone">Phone</string>
+    <string name="text_next">Next</string>
+    <string name="text_login">Login</string>
+    <string name="text_otp_title">OTP Verification</string>
+    <string name="enter_otp">Please enter the OTP we have sent you on</string>
+    <string name="info_add_passcode">Add passcode for quick login</string>
+    <string name="text_passcode">Passcode</string>
+    <string name="text_conf_passcode">Confirm Passcode</string>
+    <string name="dont_receive_otp">Didn\'t receive OTP ?\u0020</string>
+    <string name="text_auto_capt">Trying to Auto Capture</string>
+    <string name="resent_otp">Resend OTP</string>
+    <string name="otp_submit_text">Verify and Proceed</string>
+    <string name="text_verify_otp">Verify OTP</string>
+    <string name="text_add_passcode">Add Passcode</string>
+
+    <string name="text_branch">Branches</string>
+    <string name="text_employee">Employee</string>
+
+    <string name="add_salon">Add Salon</string>
+    <string name="add_spa">Add Spa</string>
+    <string name="title_activity_add_branch">AddBranchActivity</string>
+    <string name="no_employee">No employee added yet</string>
+    <string name="no_branch">No Branch Added</string>
+    <string name="add_branch">Add Branch</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="file_provider_name">salonspafileprovider</string>
+
+</resources>

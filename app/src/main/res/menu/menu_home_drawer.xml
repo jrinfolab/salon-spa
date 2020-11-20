@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_wallet"
+            android:icon="@drawable/ic_baseline_account_balance_wallet_24"
+            android:title="@string/menu_wallet" />
+        <item
+            android:id="@+id/nav_branch"
+            android:icon="@drawable/ic_baseline_ballot_24"
+            android:title="@string/menu_branch_list" />
+        <item
+            android:id="@+id/nav_employee"
+            android:icon="@drawable/ic_baseline_person_24"
+            android:title="@string/menu_employee_list" />
+        <item
+            android:id="@+id/nav_collection"
+            android:icon="@drawable/ic_baseline_money_24"
+            android:title="@string/menu_collections" />
+    </group>
+
+    <item android:title="Coummunicate">
+        <menu>
+            <item
+                android:id="@+id/contact"
+                android:icon="@drawable/ic_contact_calendar_24"
+                android:title="@string/menu_contact" />
+            <item
+                android:id="@+id/help"
+                android:icon="@drawable/ic_baseline_help_24"
+                android:title="@string/menu_help" />
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_menu_signout_24"
+                android:title="@string/menu_logout" />
+        </menu>
+    </item>
+
+</menu>

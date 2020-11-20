@@ -1,0 +1,51 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">150dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="padding_tiny">2dp</dimen>
+    <dimen name="padding_xsmall">4dp</dimen>
+    <dimen name="padding_xxsmall">8dp</dimen>
+    <dimen name="padding_small">12dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_xlarge">20dp</dimen>
+    <dimen name="padding_xxlarge">32dp</dimen>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="form_top_padding">12dp</dimen>
+
+    <dimen name="text_xsmall">4sp</dimen>
+    <dimen name="text_small">8sp</dimen>
+    <dimen name="text_xmedium">12sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+    <dimen name="text_xlarge">24sp</dimen>
+    <dimen name="text_xxlarge">32sp</dimen>
+
+    <dimen name="otp_text_box_size">48dp</dimen>
+    <dimen name="otp_text_padding">8dp</dimen>
+    <dimen name="text_header1">24dp</dimen>
+    <dimen name="text_header2">20dp</dimen>
+    <dimen name="text_header3">16dp</dimen>
+
+    <dimen name="padding_widget_box">8dp</dimen>
+    <dimen name="map_height">350dp</dimen>
+
+    <dimen name="image_size_add_branch">50dp</dimen>
+    <!--
+    Because the window insets on round devices are larger than 15dp, this padding only applies
+    to square screens.
+    -->
+    <dimen name="box_inset_layout_padding">0dp</dimen>
+
+    <!--
+    This padding applies to both square and round screens. The total padding between the buttons
+    and the window insets is box_inset_layout_padding (above variable) on square screens and
+    inner_frame_layout_padding (below variable) on round screens.
+    -->
+    <dimen name="inner_frame_layout_padding">5dp</dimen>
+
+
+</resources>

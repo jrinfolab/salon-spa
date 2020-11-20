@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jrinfolab.beautyshop">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Home">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.account.LoginActivity"
+            android:theme="@style/AppTheme.NoToolbar" />
+
+        <activity
+            android:name=".ui.account.RegisterActivity"
+            android:theme="@style/AppTheme.NoToolbar" />
+
+        <activity
+            android:name=".ui.account.OtpActivity"
+            android:theme="@style/AppTheme.NoToolbar" />
+
+        <activity
+            android:name=".ui.AddBranch"
+            android:theme="@style/ThemeSinglePage" />
+
+        <activity
+            android:name=".ui.ImageSlider"
+            android:theme="@style/ThemeSinglePage" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:theme="@style/AppTheme.Home" />
+
+        <activity
+            android:name=".ui.ListEmployee"
+            android:theme="@style/ThemeSinglePage" />
+
+        <activity
+            android:name=".ui.ListBranch"
+            android:theme="@style/ThemeSinglePage" />
+
+        <activity
+            android:name=".ui.AddEmployee"
+            android:theme="@style/ThemeSinglePage" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+    </application>
+
+</manifest>

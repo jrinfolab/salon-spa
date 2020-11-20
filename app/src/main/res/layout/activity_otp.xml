@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/screen_padding">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/padding_large"
+        android:hint="@string/text_verify_otp"
+        android:inputType="text"
+        android:text="@string/text_otp_title"
+        android:textSize="@dimen/text_xlarge"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="@string/enter_otp"
+            android:textSize="@dimen/text_medium" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="9844639631"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_large"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_edit_phone"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/text_phone"
+                android:text="Edit"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_medium" />
+        </RelativeLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_ipl_passcode"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_xxsmall"
+            android:gravity="center_horizontal"
+            android:hint="OTP Code"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_otp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:letterSpacing="2"
+                android:maxLength="4"
+                android:textAlignment="center" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/otp_number_layout"
+            android:layout_marginTop="@dimen/padding_large"
+            android:gravity="center_horizontal">
+
+            <ProgressBar
+                android:id="@+id/progress_circular"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/progress_circular"
+                android:gravity="center"
+                android:layout_marginLeft="@dimen/padding_small"
+                android:text="@string/text_auto_capt"
+                android:textSize="@dimen/text_medium" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/timer_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="00:10"
+                android:textColor="@android:color/black" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/otp_number_layout"
+            android:layout_marginTop="@dimen/padding_large">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:inputType="text"
+                android:text="@string/dont_receive_otp"
+                android:textSize="@dimen/text_medium" />
+
+            <Button
+                android:id="@+id/btn_resend_otp"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="end"
+                android:layout_marginLeft="@dimen/padding_large"
+                android:text="@string/resent_otp"
+                android:textAllCaps="false" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_verify_otp"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding_xxlarge"
+            android:text="@string/text_verify_otp"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</RelativeLayout>
