@@ -43,7 +43,7 @@ public class DbProvider {
     static String PROVIDER_NAME;
     static String PROVIDER_PREFIX;
 
-    public static final String DB_NAME = "salonspadb";
+    public static final String DB_NAME = "salonspa";
     public static final int DB_VERSION = 1;
 
     // Table names
@@ -63,13 +63,13 @@ public class DbProvider {
     public static final String COL_EMP_IMAGE_BLOB = "image_blob";
 
     static String CREATE_TABLE_EMPLOYEE = "CREATE TABLE " + TABLE_NAME_EMPLOYEE + " ("
-            + COL_EMP_ID         + " TEXT              , "
-            + COL_EMP_NAME       + " TEXT              , "
-            + COL_EMP_PHONE      + " TEXT              , "
-            + COL_EMP_DOB        + " TEXT              , "
-            + COL_EMP_YOE        + " INTEGER DEFAULT 0 , "
-            + COL_EMP_ADDRESS    + " TEXT              , "
-            + COL_EMP_IMAGE_URL  + " TEXT              , "
+            + COL_EMP_ID + " TEXT              , "
+            + COL_EMP_NAME + " TEXT              , "
+            + COL_EMP_PHONE + " TEXT              , "
+            + COL_EMP_DOB + " TEXT              , "
+            + COL_EMP_YOE + " INTEGER DEFAULT 0 , "
+            + COL_EMP_ADDRESS + " TEXT              , "
+            + COL_EMP_IMAGE_URL + " TEXT              , "
             + COL_EMP_IMAGE_BLOB + " BLOB              ) ";
 
 /*

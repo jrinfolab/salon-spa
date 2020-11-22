@@ -1,6 +1,7 @@
 package com.jrinfolab.beautyshop.ui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,29 +10,28 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.gson.Gson;
 import com.jrinfolab.beautyshop.Constant;
+import com.jrinfolab.beautyshop.FileUtil;
 import com.jrinfolab.beautyshop.Preference;
 import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.Util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,22 +52,29 @@ public class ImageSlider extends AppCompatActivity {
     private ImageAdapter imageAdapter;
 
     String defaultHeaderTitle = "Add Image";
-    private List<String> imageUriList;
+
+    private List<String> mImagePathList;
+    private String mCameraImagePath;
 
     private Context mContext;
-    private Uri mCameraImageUri;
+
+    ProgressDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_slider);
+        Log.d(TAG, "onCreate");
 
         mContext = this;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(defaultHeaderTitle);
 
-        imageUriList = new ArrayList<String>();
+        mDialog = new ProgressDialog(mContext);
+        mDialog.setMessage("Please wait ....");
+
+        mImagePathList = new ArrayList<String>();
 
         mNoImage = findViewById(R.id.no_image);
         mActionBrowseImage = findViewById(R.id.browse_image);
@@ -81,7 +88,7 @@ public class ImageSlider extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                getSupportActionBar().setTitle((position + 1 + "/" + imageUriList.size()));
+                getSupportActionBar().setTitle((position + 1 + "/" + mImagePathList.size()));
             }
 
             @Override
@@ -102,66 +109,63 @@ public class ImageSlider extends AppCompatActivity {
         mActionCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                // Ensure that there's a camera activity to handle the intent
                 if (intent.resolveActivity(getPackageManager()) != null) {
-
-                    // Create the File where the photo should go
                     File imageFile = Util.createTempImageFile(mContext);
-
-                    // Continue only if the File was successfully created
                     if (imageFile != null) {
-                        mCameraImageUri = FileProvider.getUriForFile(mContext, "fileprovider", imageFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraImageUri);
+                        mCameraImagePath = imageFile.getPath();
+                        Uri uri = FileProvider.getUriForFile(mContext, "fileprovider", imageFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                     }
                 }
             }
         });
+
+        String[] storedImageList = Preference.getBranchImage(mContext);
+        if (storedImageList != null && storedImageList.length > 0) {
+            mImagePathList = new ArrayList(Arrays.asList(storedImageList));
+        }
+        showSelectedImages(0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        String[] storedImageList = Preference.getBranchImage(mContext);
-        if (storedImageList != null && storedImageList.length > 0) {
-            imageUriList = new ArrayList(Arrays.asList(storedImageList));
-        }
-
-        showSelectedImages(0);
+        Log.d(TAG, "onResume");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d(TAG, "onOptionsItemSelected");
+
         switch (item.getItemId()) {
+
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
 
             case R.id.menu_save: {
-                String[] imageList = imageUriList.toArray(new String[imageUriList.size()]);
-                Preference.setBranchImage(mContext, imageList);
+
                 Intent intent = new Intent();
-                intent.putExtra(Constant.BRANCH_IMAGE_COUNT, imageList.length);
+
+                if (mImagePathList.size() > 0) {
+                    String[] imageList = mImagePathList.toArray(new String[mImagePathList.size()]);
+                    Preference.setBranchImage(mContext, imageList);
+                    intent.putExtra(Constant.BRANCH_IMAGE_COUNT, imageList.length);
+                } else {
+                    Preference.setBranchImage(mContext, null);
+                    intent.putExtra(Constant.BRANCH_IMAGE_COUNT, 0);
+                }
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
             break;
 
-            case R.id.menu_delete: {
-                int deletePos = mViewPager.getCurrentItem();
-                imageUriList.remove(deletePos);
-                if (imageUriList.size() > 0) {
-                    int curPos = (imageUriList.size() == deletePos ? imageUriList.size() - 1 : deletePos);
-                    showSelectedImages(curPos);
-                } else {
-                    updateViews();
-                }
-            }
-            break;
+            case R.id.menu_delete:
+                deleteImage();
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -172,15 +176,18 @@ public class ImageSlider extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.menu_image_slider, menu);
         menuDelete = menu.findItem(R.id.menu_delete);
         menuSave = menu.findItem(R.id.menu_save);
+        updateMenuView();
         return true;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult");
 
         if (resultCode != Activity.RESULT_OK) {
             Toast.makeText(mContext, "Failed", Toast.LENGTH_LONG).show();
@@ -189,35 +196,104 @@ public class ImageSlider extends AppCompatActivity {
 
         if (requestCode == REQUEST_IMAGE_PICK) {
 
+            List<Uri> uriList = new ArrayList<>();
+
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
                 for (int i = 0; i < count; i++) {
-                    imageUriList.add(data.getClipData().getItemAt(i).getUri().toString());
+                    uriList.add(data.getClipData().getItemAt(i).getUri());
                 }
             } else if (data.getData() != null) {
-                imageUriList.add(data.getData().toString());
+                uriList.add(data.getData());
             }
 
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (mCameraImageUri != null) imageUriList.add(mCameraImageUri.toString());
-        }
+            if (uriList.size() > 0) copyImages(uriList);
 
-        showSelectedImages(imageUriList.size() - 1);
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            mImagePathList.add(mCameraImagePath);
+            showSelectedImages(mImagePathList.size() - 1);
+        }
+    }
+
+    private void deleteImage() {
+
+        mDialog.show();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                final int deletePos = mViewPager.getCurrentItem();
+                File file = new File(mImagePathList.get(deletePos));
+                file.delete();
+                mImagePathList.remove(deletePos);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mImagePathList.size() > 0) {
+                            int curPos = (mImagePathList.size() == deletePos ? mImagePathList.size() - 1 : deletePos);
+                            showSelectedImages(curPos);
+                        } else {
+                            updateViews();
+                        }
+                        mDialog.dismiss();
+                    }
+                });
+            }
+        });
+        thread.start();
+    }
+
+    private void copyImages(final List<Uri> uriList) {
+
+        mDialog.show();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+
+                    for (Uri uri : uriList) {
+                        File file = FileUtil.createTempImageFile(mContext);
+                        if (file == null) return;
+                        mImagePathList.add(file.getPath());
+                        FileOutputStream fos = new FileOutputStream(file);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), uri);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showSelectedImages(mImagePathList.size() - 1);
+                        mDialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        thread.start();
     }
 
     private void showSelectedImages(int curImgPos) {
-        if (imageUriList.size() > 0) {
-            imageAdapter = new ImageAdapter();
+        if (mImagePathList.size() > 0) {
+            imageAdapter = new ImageAdapter(mImagePathList);
             mViewPager.setAdapter(imageAdapter);
             mViewPager.setCurrentItem(curImgPos);
-
-            getSupportActionBar().setTitle((mViewPager.getCurrentItem() + 1 + "/" + imageUriList.size()));
+            getSupportActionBar().setTitle((mViewPager.getCurrentItem() + 1 + "/" + mImagePathList.size()));
         }
         updateViews();
     }
 
     private void updateViews() {
-        if (imageUriList.size() > 0) {
+        if (mImagePathList.size() > 0) {
             mNoImage.setVisibility(View.GONE);
             mViewPager.setVisibility(View.VISIBLE);
         } else {
@@ -225,9 +301,23 @@ public class ImageSlider extends AppCompatActivity {
             mViewPager.setVisibility(View.GONE);
             getSupportActionBar().setTitle(defaultHeaderTitle);
         }
+
+        updateMenuView();
+    }
+
+    private void updateMenuView() {
+        if (menuDelete != null && menuSave != null) {
+            menuDelete.setVisible(mImagePathList.size() > 0);
+        }
     }
 
     public class ImageAdapter extends PagerAdapter {
+
+        List<String> imagePathList;
+
+        public ImageAdapter(List<String> path) {
+            imagePathList = path;
+        }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
@@ -238,14 +328,14 @@ public class ImageSlider extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, final int position) {
 
             ImageView imageView = new ImageView(mContext);
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            Uri imageUri = Uri.parse(imageUriList.get(position));
+            File file = new File(imagePathList.get(position));
 
-            Log.d(TAG, imageUri.toString());
+            Uri uri = Uri.fromFile(file);
 
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), imageUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), uri);
                 imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -263,7 +353,7 @@ public class ImageSlider extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return imageUriList.size();
+            return imagePathList.size();
         }
     }
 }

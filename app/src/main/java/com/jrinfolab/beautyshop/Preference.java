@@ -26,12 +26,16 @@ public class Preference {
     }
 
     public static void setBranchImage(Context context, String[] imageList) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < imageList.length; i++) {
-            sb.append(imageList[i]).append(",");
-        }
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        sp.edit().putString(BRANCH_IMAGES, sb.toString()).apply();
+        if (imageList != null) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < imageList.length; i++) {
+                sb.append(imageList[i]).append(",");
+            }
+            sp.edit().putString(BRANCH_IMAGES, sb.toString()).apply();
+        } else {
+            sp.edit().putString(BRANCH_IMAGES, null).apply();
+        }
     }
 
     public static String[] getBranchImage(Context context) {
