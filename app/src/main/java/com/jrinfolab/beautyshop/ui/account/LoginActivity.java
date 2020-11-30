@@ -30,6 +30,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.jrinfolab.beautyshop.Constant;
 import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.network.MyVolley;
 import com.jrinfolab.beautyshop.network.ServerUrl;
 import com.jrinfolab.beautyshop.view.LoaderButton;
 
@@ -45,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     private LoaderButton mLoaderButton;
 
     private Context mContext;
-    private RequestQueue mRequestQueue;
     private TextView testView;
 
     private String mEnteredPhoneNumber;
@@ -107,8 +107,6 @@ public class LoginActivity extends AppCompatActivity {
                 tiplPhone.setErrorEnabled(false);
             }
         });
-
-        mRequestQueue = Volley.newRequestQueue(mContext);
     }
 
     private void makeServerCall() {
@@ -117,19 +115,17 @@ public class LoginActivity extends AppCompatActivity {
             tiplPhone.setError("Please enter 10 digit mobile number");
         } else {
             mLoaderButton.showLoader(true);
-            mRequestQueue.add(otpRequest);
+            MyVolley.getInstance(mContext).addToRequestQueue(otpRequest);
         }
     }
 
-    int reqType = Request.Method.GET;
-    String url = ServerUrl.BASE_URL;
-    private JsonObjectRequest otpRequest = new JsonObjectRequest(reqType, url, null,
+    private JsonObjectRequest otpRequest = new JsonObjectRequest(
+            Request.Method.GET,
+            ServerUrl.BASE_URL, null,
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-
                     mLoaderButton.showLoader(false);
-
                     Intent intent = new Intent(mContext, OtpActivity.class);
                     intent.putExtra(Constant.PHONE, mEnteredPhoneNumber);
                     startActivity(intent);

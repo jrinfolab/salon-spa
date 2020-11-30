@@ -4,22 +4,45 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.jrinfolab.beautyshop.Constant;
 import com.jrinfolab.beautyshop.R;
+import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.network.MyVolley;
+import com.jrinfolab.beautyshop.network.ServerUrl;
+import com.jrinfolab.beautyshop.view.LoaderButton;
+
+import org.json.JSONObject;
 
 public class AddBranch extends AppCompatActivity {
 
     private static final String TAG = "Add Branch : ";
-    private TextView mImageCount;
+
+    private static int mImageCount = 0;
+
+    private TextView mTvImageCount;
+    private TextInputLayout mIplName, mIplAddress;
+    private TextInputEditText mEditName, mEditAddress;
+    private LoaderButton mLoaderButton;
     private Button mActionSelectPhotos;
+
     private Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +54,13 @@ public class AddBranch extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Add Branch");
 
-        mImageCount = findViewById(R.id.image_count);
+        mIplName = findViewById(R.id.ipl_name);
+        mIplAddress = findViewById(R.id.ipl_address);
+        mEditName = findViewById(R.id.edit_name);
+        mEditAddress = findViewById(R.id.edit_address);
+        mLoaderButton = findViewById(R.id.loader_button);
+
+        mTvImageCount = findViewById(R.id.image_count);
         mActionSelectPhotos = findViewById(R.id.select_photos);
 
         mActionSelectPhotos.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +70,80 @@ public class AddBranch extends AppCompatActivity {
                 startActivityForResult(intent, Constant.REQ_CODE_IMAGE_LIST);
             }
         });
+
+        mLoaderButton.setText("Add Branch", "Please wait ....", false);
+
+        mLoaderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                formValidation();
+            }
+        });
+
+        mEditName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mIplName.setErrorEnabled(false);
+            }
+        });
+
+        mEditAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mIplAddress.setErrorEnabled(false);
+            }
+        });
+    }
+
+    private void formValidation() {
+        if (mEditName.getText().length() < 5) {
+            mIplName.setError("Enter valid name");
+        }
+
+        if (mEditAddress.getText().length() < 15) {
+            mIplAddress.setError("Enter valid address");
+        }
+
+        if (mImageCount <= 0) {
+            Toast.makeText(mContext, "Please add images", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void makeServerCall() {
+
+        int reqType = Request.Method.POST;
+        String url = ServerUrl.BASE_URL;
+        JSONObject reqBody = null;
+
+        MyVolley.getInstance(mContext).addToRequestQueue(new JsonObjectRequest(reqType, url, reqBody,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                })
+        );
     }
 
     @Override
@@ -64,12 +167,12 @@ public class AddBranch extends AppCompatActivity {
         }
 
         if (requestCode == Constant.REQ_CODE_IMAGE_LIST) {
-            int imageCount = data.getIntExtra(Constant.BRANCH_IMAGE_COUNT, 0);
-            if (imageCount > 0) {
-                mImageCount.setText(imageCount + " Images Selected");
+            mImageCount = data.getIntExtra(Constant.BRANCH_IMAGE_COUNT, 0);
+            if (mImageCount > 0) {
+                mTvImageCount.setText(mImageCount + " Images Selected");
                 mActionSelectPhotos.setText("Add / Delete Images");
             } else {
-                mImageCount.setText("No Images Selected");
+                mTvImageCount.setText("No Images Selected");
                 mActionSelectPhotos.setText("Add Images");
             }
         }

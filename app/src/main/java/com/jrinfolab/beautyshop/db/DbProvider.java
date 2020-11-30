@@ -17,6 +17,7 @@
  */
 package com.jrinfolab.beautyshop.db;
 
+import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,28 +30,29 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.jrinfolab.beautyshop.Constant;
 
-public class DbProvider {
+public class DbProvider extends ContentProvider {
 
     private static final String TAG = Constant.APP_TAG + "DbProvider";
-
-    private static DbProvider mDbProvider;
 
     private static DataBaseHelper mDbHelper;
     private static SQLiteDatabase mSqlDb;
 
-    static String PROVIDER_NAME;
-    static String PROVIDER_PREFIX;
-
-    public static final String DB_NAME = "salonspa";
-    public static final int DB_VERSION = 1;
+    private static final String DB_NAME         = "salonspa";
+    protected static final String PROVIDER_NAME = "UgsDBProvider";
+    protected static String PROVIDER_PREFIX     = "content://" + PROVIDER_NAME + "/";
+    private static final int DB_VERSION         = 1;
 
     // Table names
     public static final String TABLE_NAME_EMPLOYEE = "employee";
+    public static final String TABLE_NAME_BRANCH = "branches";
 
     // Content URI
-    public static Uri CONTENT_URI_EMPLOYEE;
+    public static Uri CONTENT_URI_BRANCH       = Uri.parse(PROVIDER_PREFIX + TABLE_NAME_BRANCH);
 
     // Employee table columns
     public static final String COL_EMP_ID = "id";
@@ -72,114 +74,37 @@ public class DbProvider {
             + COL_EMP_IMAGE_URL + " TEXT              , "
             + COL_EMP_IMAGE_BLOB + " BLOB              ) ";
 
-/*
+    // Branch table columns
+    public static final String COL_BRANCH_ID      = "id";
+    public static final String COL_BRANCH_NAME    = "name";
+    public static final String COL_BRANCH_ADDRESS = "address";
+    public static final String COL_BRANCH_PHOTOS  = "photos"; // photo path separated by comma
+    public static final String COL_BRANCH_LAT     = "latitude";
+    public static final String COL_BRANCH_LNG     = "longitude";
 
-    static String CREATE_GROUPS_TABLE = "CREATE TABLE " + TABLE_NAME_GROUPS + " ("
-            + COL_GROUP_ID + " TEXT PRIMARY KEY, "
-            + COL_GROUP_NAME + " TEXT            , "
-            + COL_GROUP_ADMIN_ID + " TEXT            , "
-            + COL_GROUP_PHOTO_URL + " TEXT            ) ";
-
-    static String CREATE_GROUP_MEMBERS_TABLE = "CREATE TABLE " + TABLE_NAME_GROUP_MEMBERS + " ("
-            + COL_GROUP_ID + " TEXT                                , "
-            + COL_M_ID + " TEXT                                , "
-
-            + "PRIMARY KEY("
-            + COL_GROUP_ID + ", "
-            + COL_M_ID + ") ON CONFLICT REPLACE)";
-
-    static String CREATE_NICK_NAMES_TABLE = "CREATE TABLE " + TABLE_NICK_NAMES + " ("
-            + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COL_M_USER_ID + " TEXT                             , "
-            + COL_M_WEARABLE_ID + " TEXT                             , "
-            + COL_NICK_NAME + " TEXT                             ) ";
-
-    static String CREATE_KIDS_CONTACTS_TABLE = "CREATE TABLE " + TABLE_NAME_KIDS_CONTACTS + " ("
-            + COL_ID + " TEXT UNIQUE NOT NULL , "
-            + COL_CONTACT_DEVICE_ID + " TEXT NOT NULL        , "
-            + COL_CONTACT_NAME + " TEXT UNIQUE NOT NULL , "
-            + COL_CONTACT_NUMBER + " TEXT UNIQUE NOT NULL , "
-            + COL_CONTACT_TYPE + " TEXT                 , "
-            + COL_CONTACT_PRIORITY + " INTEGER NOT NULL     ) ";
-
-
-    static String CREATE_SAFE_ZONE_TABLE = "CREATE TABLE " + TABLE_NAME_SAFE_ZONES + " ("
-            + COL_M_DEVICE_ID + " TEXT NOT NULL           , "
-            + COL_SZ_ID + " TEXT PRIMARY KEY NOT NULL , "
-            + COL_SZ_TYPE + " TEXT                      , "
-            + COL_ADDRESS + " TEXT                      , "
-            + COL_NAME + " TEXT                      , "
-            + COL_LATITUDE + " DOUBLE                    , "
-            + COL_LONGITUDE + " DOUBLE                    , "
-            + COL_RADIUS + " DOUBLE                    ) ";
-
-    static String CREATE_SMART_MESSAGING_TABLE = "CREATE TABLE " + TABLE_NAME_SMART_MESSAGING + " ("
-            + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + MESSAGE_ID + " TEXT UNIQUE NOT NULL             , "
-            + FILE_ID + " TEXT                             , "
-            + FILE_TYPE + " TEXT NOT NULL                    , "
-            + FILE_PATH + " TEXT                             , "
-            + FROM_USER_ID + " TEXT NOT NULL                    , "
-            + TO_USER_ID + " TEXT NOT NULL                    , "
-            + TIME + " TEXT NOT NULL                    , "
-            + MESSAGE_TEXT + " TEXT                             , "
-            + STATUS + " INTEGER                          , "
-            + FILE_SIZE + " INTEGER                          , "
-            + FILE_DURATION + " TEXT                             ) ";
-
-    static String CREATE_IMAGES_TABLE = "CREATE TABLE " + TABLE_NAME_IMAGES + " ("
-            + COL_IMAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT , "
-            + COL_IMAGE_URL + " TEXT                              , "
-            + COL_IMAGE_BLOB + " BLOB                              ) ";
-
-    static String CREATE_EVENT_HISTORY_TABLE = "CREATE TABLE " + TABLE_NAME_EVENT_HISTORY + " ("
-            + COL_TIMESTAMP + " INTEGER             DEFAULT (strftime('%s','now')), "
-            + COL_M_ID + " TEXT    NOT NULL                                  , "
-            + COL_M_NAME + " TEXT                                              , "
-            + COL_TIMEZONE + " TEXT                                              , "
-            + COL_CATEGORY + " TEXT    NOT NULL    DEFAULT 'event'               , "
-            + COL_TYPE + " TEXT    NOT NULL    DEFAULT 'other'               , "
-            + COL_LATITUDE + " DOUBLE                                            , "
-            + COL_LONGITUDE + " DOUBLE                                            , "
-            + COL_MESSAGE + " TEXT                                              , "
-            + COL_ACCURACY + " DOUBLE              DEFAULT 0.0                   , "
-            + COL_BATTERY + " INTEGER             DEFAULT 0                     , "
-            + COL_SIGNAL + " INTEGER             DEFAULT -255                  , "
-            + COL_CHARGING + " INTEGER             DEFAULT -1                    , "
-            + COL_GROUP_ID + " TEXT    NOT NULL                                  , "
-            + COL_DURATION + " TEXT    NOT NULL    DEFAULT '0hrs'                , "
-            + COL_SEEN + " INTEGER NOT NULL    DEFAULT 0                     , "
-            + COL_EX_DATA1 + " TEXT                                              , "
-            + COL_EX_DATA2 + " TEXT                                              , "
-
-            + "PRIMARY KEY("
-            + COL_TIMESTAMP + ", "
-            + COL_TYPE + ", "
-            + COL_M_ID + ") ON CONFLICT REPLACE)";
-
-    static String CREATE_CONFIGURATION_TABLE = "CREATE TABLE " + TABLE_NAME_CONFIGURATION + " ("
-            + COL_M_DEVICE_ID + " TEXT PRIMARY KEY                         , "
-            + COL_SW_VERSION + " TEXT NOT NULL DEFAULT 'UNKNOWN'          , "
-            + COL_SW_SYNC_TIME + " INTEGER DEFAULT (strftime('%s','now'))   , "  // last checked time for update
-            + COL_SW_SYNC_STATUS + " TEXT    DEFAULT 'in_sync'                , "
-            + COL_CONFIG_REP_VERSION + " TEXT                                     , "
-            + COL_CONFIG_DES_VERSION + " TEXT                                     , "
-            + COL_CONFIG_REP_INTERVAL + " INTEGER DEFAULT 300                      , "  // Seconds
-            + COL_CONFIG_DES_INTERVAL + " INTEGER DEFAULT 300                      , "  // Seconds
-            + COL_CONFIG_REP_DAYS + " TEXT DEFAULT '1.1.1.1.1.1.1'             , "
-            + COL_CONFIG_DES_DAYS + " TEXT DEFAULT '1.1.1.1.1.1.1'             , "
-            + COL_CONFIG_REP_START_TIME + " TEXT  DEFAULT '00:00'                  , "
-            + COL_CONFIG_DES_START_TIME + " TEXT  DEFAULT '00:00'                  , "
-            + COL_CONFIG_REP_END_TIME + " TEXT  DEFAULT '23:59'                  , "
-            + COL_CONFIG_DES_END_TIME + " TEXT  DEFAULT '23:59'                  ) ";
-
-*/
+    static String CREATE_TABLE_BRANCH = "CREATE TABLE " + TABLE_NAME_BRANCH + " ("
+            + COL_BRANCH_ID       + " TEXT               , "
+            + COL_BRANCH_NAME     + " TEXT               , "
+            + COL_BRANCH_ADDRESS  + " TEXT               , "
+            + COL_BRANCH_PHOTOS   + " TEXT               , "
+            + COL_BRANCH_LAT      + " DOUBLE DEFAULT 1.0 , "
+            + COL_BRANCH_LNG      + " DOUBLE DEFAULT 1.0 ) ";
 
     private DbProvider() {
         // private constructor of Singleton class
     }
 
+    @Override
+    public boolean onCreate() {
+        Context context = getContext();
+        mDbHelper = new DataBaseHelper(context);
 
+        mSqlDb = mDbHelper.getWritableDatabase();
+        return (mSqlDb == null) ? false : true;
+    }
+
+
+    @Override
     public Uri insert(Uri uri, ContentValues values) {
         String tableName = getTableNameFromUri(uri);
         return insert(tableName, uri, values);
@@ -202,11 +127,19 @@ public class DbProvider {
         throw new SQLiteConstraintException("Error while insertion");
     }
 
+    @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         String tableName = getTableNameFromUri(uri);
         return mSqlDb.query(tableName, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+        return null;
+    }
+
+    @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         String tableName = getTableNameFromUri(uri);
         return mSqlDb.update(tableName, values, selection, selectionArgs);
@@ -217,10 +150,6 @@ public class DbProvider {
         return mSqlDb.delete(tableName, selection, selectionArgs);
     }
 
-    /**
-     * Helper class that actually creates and manages
-     * the provider's underlying data repository.
-     */
     private static class DataBaseHelper extends SQLiteOpenHelper {
 
         private Context context;
@@ -237,11 +166,14 @@ public class DbProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            // TODO : Logout
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_BRANCH);
+            onCreate(db);
         }
     }
 
     private String getTableNameFromUri(Uri uri) {
-        if (CONTENT_URI_EMPLOYEE.equals(uri)) return TABLE_NAME_EMPLOYEE;
+        if (CONTENT_URI_BRANCH.equals(uri)) return TABLE_NAME_BRANCH;
         return null;
     }
 }

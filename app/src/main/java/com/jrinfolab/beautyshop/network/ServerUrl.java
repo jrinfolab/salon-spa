@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ServerUrl {
 
-    public static final String BASE_URL  = "https://staging-spa-core.df.r.appspot.com/api/user";
+    public static final String BASE_URL  = "https://staging-spa-core.appspot.com/api/user";
 
     public static final String API      = "api";
     public static final String USER     = "user";

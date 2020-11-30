@@ -51,7 +51,7 @@ public class ImageSlider extends AppCompatActivity {
 
     private ImageAdapter imageAdapter;
 
-    String defaultHeaderTitle = "Add Image";
+    private String defaultHeaderTitle = "Add Image";
 
     private List<String> mImagePathList;
     private String mCameraImagePath;
