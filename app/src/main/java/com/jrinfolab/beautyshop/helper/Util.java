@@ -1,7 +1,8 @@
-package com.jrinfolab.beautyshop;
+package com.jrinfolab.beautyshop.helper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
@@ -66,5 +67,23 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getString(String[] data) {
+        if (data != null && data.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.length; i++) {
+                sb.append(data[i]).append(",");
+            }
+            return sb.toString();
+        }
+        return null;
+    }
+
+    public static String[] getStringArray(String data) {
+        if (data != null) {
+            return data.split(",");
+        }
+        return null;
     }
 }

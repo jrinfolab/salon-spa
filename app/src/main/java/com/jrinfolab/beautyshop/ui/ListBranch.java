@@ -3,6 +3,7 @@ package com.jrinfolab.beautyshop.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,20 +16,31 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jrinfolab.beautyshop.R;
+import com.jrinfolab.beautyshop.adapter.BranchListAdapter;
+import com.jrinfolab.beautyshop.db.DbHelper;
+import com.jrinfolab.beautyshop.pojo.Branch;
 import com.jrinfolab.beautyshop.pojo.Employee;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListBranch extends AppCompatActivity {
+
+    private static final String TAG = "ListBranch";
 
     private TextView mEmptyInfo;
     private Button mActionAdd;
     private RelativeLayout mLayoutEmpty;
-    private ListView mListView;
+    private RecyclerView mListView;
+    private ExtendedFloatingActionButton mFab;
 
-    private ArrayList<Employee> mEmployeeList;
+    private List<Branch> mBranchList;
 
     private Context mContext;
 
@@ -46,16 +58,7 @@ public class ListBranch extends AppCompatActivity {
         mActionAdd = findViewById(R.id.action_add);
         mLayoutEmpty = findViewById(R.id.layout_empty);
         mListView = findViewById(R.id.listview);
-
-        mEmployeeList = new ArrayList<>();
-
-        if (mEmployeeList.size() > 0) {
-            mListView.setVisibility(View.VISIBLE);
-            mLayoutEmpty.setVisibility(View.GONE);
-        } else {
-            mListView.setVisibility(View.GONE);
-            mLayoutEmpty.setVisibility(View.VISIBLE);
-        }
+        mFab = findViewById(R.id.fab);
 
         mActionAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +66,59 @@ public class ListBranch extends AppCompatActivity {
                 startActivity(new Intent(mContext, AddBranch.class));
             }
         });
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, AddBranch.class));
+            }
+        });
+
+        mListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    // Scroll Down
+                    if (mFab.isShown()) {
+                        mFab.hide();
+                    }
+                } else if (dy < 0) {
+                    // Scroll Up
+                    if (!mFab.isShown()) {
+                        mFab.show();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getBranchListFromDb();
+    }
+
+    private void getBranchListFromDb() {
+
+        mBranchList = DbHelper.getBranchList(mContext);
+
+        if (mBranchList != null && mBranchList.size() > 0) {
+
+            mListView.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.VISIBLE);
+            mLayoutEmpty.setVisibility(View.GONE);
+
+            BranchListAdapter adapter = new BranchListAdapter(mContext, mBranchList);
+            mListView.setAdapter(adapter);
+            mListView.setLayoutManager(new LinearLayoutManager(this));
+
+        } else {
+            mListView.setVisibility(View.GONE);
+            mFab.setVisibility(View.GONE);
+            mLayoutEmpty.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -74,33 +130,6 @@ public class ListBranch extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-
-    public class MyAdapter extends ArrayAdapter<Employee> {
-
-        private ArrayList<Employee> data;
-        private Context context;
-
-        public MyAdapter(@NonNull Context context, int resource, ArrayList<Employee> data) {
-            super(context, resource, data);
-            this.context = context;
-            this.data = data;
-        }
-
-        private int lastPosition = -1;
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-
-            Employee dataModel = getItem(position);
-
-            if (view == null) {
-                view = LayoutInflater.from(getContext()).inflate(R.layout.add_branch, parent, false);
-            }
-
-            return view;
         }
     }
 }

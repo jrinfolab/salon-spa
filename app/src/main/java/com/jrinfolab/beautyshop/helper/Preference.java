@@ -1,12 +1,7 @@
-package com.jrinfolab.beautyshop;
+package com.jrinfolab.beautyshop.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Preference {
 
@@ -27,23 +22,12 @@ public class Preference {
 
     public static void setBranchImage(Context context, String[] imageList) {
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        if (imageList != null) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < imageList.length; i++) {
-                sb.append(imageList[i]).append(",");
-            }
-            sp.edit().putString(BRANCH_IMAGES, sb.toString()).apply();
-        } else {
-            sp.edit().putString(BRANCH_IMAGES, null).apply();
-        }
+        sp.edit().putString(BRANCH_IMAGES, Util.getString(imageList)).apply();
     }
 
     public static String[] getBranchImage(Context context) {
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String list = sp.getString(BRANCH_IMAGES, null);
-        if (list != null) {
-            return list.split(",");
-        }
-        return null;
+        return list != null ? Util.getStringArray(list) : null;
     }
 }

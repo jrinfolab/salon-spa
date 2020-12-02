@@ -1,4 +1,4 @@
-package com.jrinfolab.beautyshop;
+package com.jrinfolab.beautyshop.helper;
 
 import android.content.Context;
 import android.net.Uri;

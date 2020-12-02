@@ -3,6 +3,7 @@ package com.jrinfolab.beautyshop.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,11 +21,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.jrinfolab.beautyshop.Constant;
+import com.jrinfolab.beautyshop.helper.Constant;
+import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.db.DbHelper;
 import com.jrinfolab.beautyshop.network.MyVolley;
 import com.jrinfolab.beautyshop.network.ServerUrl;
+import com.jrinfolab.beautyshop.pojo.Branch;
 import com.jrinfolab.beautyshop.view.LoaderButton;
 
 import org.json.JSONObject;
@@ -112,16 +115,47 @@ public class AddBranch extends AppCompatActivity {
     }
 
     private void formValidation() {
-        if (mEditName.getText().length() < 5) {
+
+        mLoaderButton.showLoader(true);
+
+        String name = mEditName.getText().toString();
+        String address = mEditAddress.getText().toString();
+
+        boolean validated = true;
+
+        if (name.length() < 5) {
             mIplName.setError("Enter valid name");
+            validated = false;
         }
 
-        if (mEditAddress.getText().length() < 15) {
+        if (address.length() < 15) {
             mIplAddress.setError("Enter valid address");
+            validated = false;
         }
 
         if (mImageCount <= 0) {
             Toast.makeText(mContext, "Please add images", Toast.LENGTH_LONG).show();
+            validated = false;
+        }
+
+        if (!validated) {
+            mLoaderButton.showLoader(false);
+            return;
+        }
+
+        Branch branch = new Branch();
+        branch.setId(String.valueOf(System.currentTimeMillis()));
+        branch.setName(name);
+        branch.setAddress(address);
+        branch.setLat(1.0);
+        branch.setLng(1.0);
+        branch.setPhotoList(Preference.getBranchImage(mContext));
+
+        // TODO : Do db operation in background thread
+        Uri uri = DbHelper.addBranch(mContext, branch);
+        mLoaderButton.showLoader(false);
+        if (uri != null) {
+            finish();
         }
     }
 

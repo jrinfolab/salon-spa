@@ -15,9 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.ui.AddBranch;
-import com.jrinfolab.beautyshop.ui.AddEmployee;
-import com.jrinfolab.beautyshop.ui.account.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,9 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         mContext = this;
-
         isLoggedIn = Preference.isLoggedId(mContext);
     }
 
@@ -54,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             if (isLoggedIn) {
-                Intent intent = new Intent(mContext, AddBranch.class);
+                Intent intent = new Intent(mContext, HomeActivity.class);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(mContext, AddBranch.class);
+                Intent intent = new Intent(mContext, HomeActivity.class);
                 startActivity(intent);
             }
         }

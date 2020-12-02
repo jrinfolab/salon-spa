@@ -2,34 +2,29 @@ package com.jrinfolab.beautyshop.ui.account;
 
 import android.content.Context;
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.KeyboardShortcutInfo;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.jrinfolab.beautyshop.Constant;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.helper.Util;
 import com.jrinfolab.beautyshop.network.MyVolley;
 import com.jrinfolab.beautyshop.network.ServerUrl;
 import com.jrinfolab.beautyshop.view.LoaderButton;

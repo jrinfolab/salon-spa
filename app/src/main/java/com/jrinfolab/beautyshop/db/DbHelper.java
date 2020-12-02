@@ -25,7 +25,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
+
+import com.jrinfolab.beautyshop.helper.Util;
+import com.jrinfolab.beautyshop.pojo.Branch;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,11 +39,62 @@ import java.util.List;
 
 
 public class DbHelper {
-/*
-    private final static String TAG = "UgsDBHelper";
+
+    private final static String TAG = "DbHelper";
     private final static String EQUAL_QUESTION_MARK = "=?";
     private static final String SYMBOL_OR = " OR ";
 
+    public static Uri addBranch(Context context, Branch branch) {
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_BRANCH_ID, branch.getId());
+        values.put(DbProvider.COL_BRANCH_NAME, branch.getName());
+        values.put(DbProvider.COL_BRANCH_ADDRESS, branch.getAddress());
+        values.put(DbProvider.COL_BRANCH_LAT, branch.getLat());
+        values.put(DbProvider.COL_BRANCH_LNG, branch.getLng());
+        values.put(DbProvider.COL_BRANCH_PHOTOS, Util.getString(branch.getPhotoList()));
+        Uri uri = context.getContentResolver().insert(DbProvider.CONTENT_URI_BRANCH, values);
+        Log.d(TAG, "New branch added : " + uri.toString());
+        return uri;
+    }
+
+    public static List<Branch> getBranchList(Context context) {
+
+        Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_BRANCH,
+                null, null, null, null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        if (cursor.getCount() > 0) {
+            List<Branch> branchList = new ArrayList<Branch>();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Branch branch = new Branch();
+                branch.setId(getStrVal(cursor, DbProvider.COL_BRANCH_ID));
+                branch.setName(getStrVal(cursor, DbProvider.COL_BRANCH_NAME));
+                branch.setAddress(getStrVal(cursor, DbProvider.COL_BRANCH_ADDRESS));
+                branch.setLat(getDblVal(cursor, DbProvider.COL_BRANCH_LAT));
+                branch.setLng(getDblVal(cursor, DbProvider.COL_BRANCH_LNG));
+                branch.setPhotoList(Util.getStringArray(getStrVal(cursor, DbProvider.COL_BRANCH_PHOTOS)));
+                branchList.add(branch);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return branchList;
+        }
+        return null;
+    }
+
+    private static String getStrVal(Cursor cursor, String key) {
+        return cursor.getString(cursor.getColumnIndex(key));
+    }
+
+    private static double getDblVal(Cursor cursor, String key) {
+        return cursor.getDouble(cursor.getColumnIndex(key));
+    }
+
+/*
     public static User getMember(Context context, String user) {
 
         User superUser = new User();

@@ -26,7 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.helper.Util;
 
 import java.io.File;
 import java.util.Calendar;

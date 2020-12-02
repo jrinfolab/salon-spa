@@ -1,4 +1,4 @@
-package com.jrinfolab.beautyshop;
+package com.jrinfolab.beautyshop.helper;
 
 public class Constant {
 

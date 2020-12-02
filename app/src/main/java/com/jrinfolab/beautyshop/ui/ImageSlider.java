@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,11 +23,11 @@ import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.jrinfolab.beautyshop.Constant;
-import com.jrinfolab.beautyshop.FileUtil;
-import com.jrinfolab.beautyshop.Preference;
+import com.jrinfolab.beautyshop.helper.Constant;
+import com.jrinfolab.beautyshop.helper.FileUtil;
+import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.helper.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -25,9 +25,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.jrinfolab.beautyshop.Constant;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.Util;
+import com.jrinfolab.beautyshop.helper.Util;
 import com.jrinfolab.beautyshop.network.ServerUrl;
 import com.jrinfolab.beautyshop.view.LoaderButton;
 

@@ -10,17 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
-import com.jrinfolab.beautyshop.Constant;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.HomeActivity;
-import com.jrinfolab.beautyshop.MainActivity;
-import com.jrinfolab.beautyshop.Preference;
+import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.R;
 
 public class OtpActivity extends AppCompatActivity {
