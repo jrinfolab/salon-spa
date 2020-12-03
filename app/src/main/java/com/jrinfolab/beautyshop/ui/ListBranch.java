@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.adapter.BranchListAdapter;
 import com.jrinfolab.beautyshop.db.DbHelper;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.pojo.Branch;
 import com.jrinfolab.beautyshop.pojo.Employee;
 
@@ -70,7 +72,9 @@ public class ListBranch extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, AddBranch.class));
+                Intent intent = new Intent(mContext, AddBranch.class);
+                intent.putExtra(Constant.IS_UPDATE, false);
+                startActivity(intent);
             }
         });
 
@@ -78,7 +82,6 @@ public class ListBranch extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 if (dy > 0) {
                     // Scroll Down
                     if (mFab.isShown()) {
@@ -110,7 +113,7 @@ public class ListBranch extends AppCompatActivity {
             mFab.setVisibility(View.VISIBLE);
             mLayoutEmpty.setVisibility(View.GONE);
 
-            BranchListAdapter adapter = new BranchListAdapter(mContext, mBranchList);
+            BranchListAdapter adapter = new BranchListAdapter(mContext, mBranchList, clickListener);
             mListView.setAdapter(adapter);
             mListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -132,4 +135,20 @@ public class ListBranch extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    BranchListAdapter.ItemClickListener clickListener = new BranchListAdapter.ItemClickListener() {
+        @Override
+        public void onItemClick(View view, int position) {
+            Branch branch = mBranchList.get(position);
+            if (view.getId() == R.id.action_delete_branch) {
+                DbHelper.deleteBranch(mContext, branch.getId());
+                getBranchListFromDb();
+            } else if (view.getId() == R.id.action_edit_info) {
+                Intent intent = new Intent(mContext, AddBranch.class);
+                intent.putExtra(Constant.IS_UPDATE, true);
+                intent.putExtra(Constant.DATA1, branch.getId());
+                startActivity(intent);
+            }
+        }
+    };
 }

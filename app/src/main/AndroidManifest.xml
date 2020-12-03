@@ -64,6 +64,10 @@
             android:name=".ui.AddEmployee"
             android:theme="@style/ThemeSinglePage" />
 
+        <activity
+            android:name=".ui.ImageViewer"
+            android:theme="@style/ThemeSinglePage" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="fileprovider"

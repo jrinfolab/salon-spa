@@ -28,6 +28,13 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isLoggedIn = false;
 
+    private static final int PERMISSIONS_REQUEST_CODE = 1001;
+
+    // Requesting permission to RECORD_AUDIO
+    private boolean permissionGranted = false;
+    private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkPermission();
+        requestPermission();
     }
 
     CountDownTimer timer = new CountDownTimer(HOLD_TIME, HOLD_TIME / SECOND) {
@@ -65,16 +72,15 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                timer.start();
                 Log.d(TAG, "permission granted");
             } else {
-                Log.d(TAG, "permission denied, closing app");
-                finish();
+                checkPermission();
             }
         }
     }
@@ -82,11 +88,13 @@ public class MainActivity extends AppCompatActivity {
     public void checkPermission() {
         // TODO : add check for other permission also
         int result = mContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (result != PackageManager.PERMISSION_GRANTED) {
+
+        if(result == PackageManager.PERMISSION_GRANTED){
+
+        } else {
             boolean canRequestAgain = shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE);
             if (canRequestAgain) {
-                Log.d(TAG, "permission denied, request again");
-                requestPermission();
+                finish();
             } else {
                 Log.d(TAG, "permission denied, and opted 'Never ask again'");
 
@@ -103,16 +111,12 @@ public class MainActivity extends AppCompatActivity {
                 });
                 dialog.create().show();
             }
-        } else {
-            timer.start();
-            Log.d(TAG, "permission granted");
         }
     }
 
     public void requestPermission() {
         try {
-            String[] permissionList = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA};
+            String[] permissionList = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
             requestPermissions(permissionList, 100);
         } catch (Exception e) {
             e.printStackTrace();

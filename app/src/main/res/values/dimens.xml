@@ -29,6 +29,7 @@
     <dimen name="text_header1">24dp</dimen>
     <dimen name="text_header2">20dp</dimen>
     <dimen name="text_header3">16dp</dimen>
+    <dimen name="text_header4">12dp</dimen>
 
     <dimen name="padding_widget_box">8dp</dimen>
     <dimen name="map_height">350dp</dimen>

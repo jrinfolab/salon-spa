@@ -22,7 +22,11 @@ public class Preference {
 
     public static void setBranchImage(Context context, String[] imageList) {
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        sp.edit().putString(BRANCH_IMAGES, Util.getString(imageList)).apply();
+        if(imageList == null || imageList.length <= 0){
+            sp.edit().remove(BRANCH_IMAGES).commit();
+        } else {
+            sp.edit().putString(BRANCH_IMAGES, Util.getString(imageList)).apply();
+        }
     }
 
     public static String[] getBranchImage(Context context) {

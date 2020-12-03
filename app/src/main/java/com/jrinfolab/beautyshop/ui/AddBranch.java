@@ -46,6 +46,8 @@ public class AddBranch extends AppCompatActivity {
 
     private Context mContext;
 
+    private boolean isUpdate = false;
+    private String updateBranchId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,11 @@ public class AddBranch extends AppCompatActivity {
 
         mContext = this;
 
+        isUpdate = getIntent().getBooleanExtra(Constant.IS_UPDATE, false);
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Add Branch");
+        getSupportActionBar().setTitle(isUpdate ? "Update Branch":"Add Branch");
 
         mIplName = findViewById(R.id.ipl_name);
         mIplAddress = findViewById(R.id.ipl_address);
@@ -74,7 +79,7 @@ public class AddBranch extends AppCompatActivity {
             }
         });
 
-        mLoaderButton.setText("Add Branch", "Please wait ....", false);
+        mLoaderButton.setText(isUpdate ? "Update Branch" : "Add Branch", "Please wait ....", false);
 
         mLoaderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +117,18 @@ public class AddBranch extends AppCompatActivity {
                 mIplAddress.setErrorEnabled(false);
             }
         });
+
+        if (isUpdate)  setOldValues();
+    }
+
+    private void setOldValues() {
+        updateBranchId = getIntent().getStringExtra(Constant.DATA1);
+        Branch branch = DbHelper.getBranch(mContext, updateBranchId);
+        mEditName.setText(branch.getName());
+        mEditAddress.setText(branch.getAddress());
+
+        mTvImageCount.setText(branch.getPhotoList().length + " Images Selected");
+        mActionSelectPhotos.setText("Edit Images");
     }
 
     private void formValidation() {
@@ -144,7 +161,7 @@ public class AddBranch extends AppCompatActivity {
         }
 
         Branch branch = new Branch();
-        branch.setId(String.valueOf(System.currentTimeMillis()));
+        branch.setId(isUpdate ? updateBranchId : String.valueOf(System.currentTimeMillis()));
         branch.setName(name);
         branch.setAddress(address);
         branch.setLat(1.0);
@@ -152,11 +169,13 @@ public class AddBranch extends AppCompatActivity {
         branch.setPhotoList(Preference.getBranchImage(mContext));
 
         // TODO : Do db operation in background thread
-        Uri uri = DbHelper.addBranch(mContext, branch);
-        mLoaderButton.showLoader(false);
-        if (uri != null) {
-            finish();
+        if (isUpdate) {
+            DbHelper.updateBranch(mContext, branch);
+        } else {
+            DbHelper.addBranch(mContext, branch);
         }
+        mLoaderButton.showLoader(false);
+        finish();
     }
 
     private void makeServerCall() {
@@ -204,11 +223,17 @@ public class AddBranch extends AppCompatActivity {
             mImageCount = data.getIntExtra(Constant.BRANCH_IMAGE_COUNT, 0);
             if (mImageCount > 0) {
                 mTvImageCount.setText(mImageCount + " Images Selected");
-                mActionSelectPhotos.setText("Add / Delete Images");
+                mActionSelectPhotos.setText("Edit Images");
             } else {
                 mTvImageCount.setText("No Images Selected");
                 mActionSelectPhotos.setText("Add Images");
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Preference.setBranchImage(mContext, null);
     }
 }

@@ -57,6 +57,59 @@ public class DbHelper {
         return uri;
     }
 
+    public static int updateBranch(Context context, Branch branch) {
+
+        String whereClause = DbProvider.COL_BRANCH_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = { branch.getId()};
+
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_BRANCH_ID, branch.getId());
+        values.put(DbProvider.COL_BRANCH_NAME, branch.getName());
+        values.put(DbProvider.COL_BRANCH_ADDRESS, branch.getAddress());
+        values.put(DbProvider.COL_BRANCH_LAT, branch.getLat());
+        values.put(DbProvider.COL_BRANCH_LNG, branch.getLng());
+        values.put(DbProvider.COL_BRANCH_PHOTOS, Util.getString(branch.getPhotoList()));
+        int row = context.getContentResolver().update(DbProvider.CONTENT_URI_BRANCH, values, whereClause, whereArgs );
+        Log.d(TAG, "Updated row : " + row);
+        return row;
+    }
+
+    public static int deleteBranch(Context context, String branchId) {
+        String whereClause = DbProvider.COL_BRANCH_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = { branchId};
+        int row = context.getContentResolver().delete(DbProvider.CONTENT_URI_BRANCH, whereClause, whereArgs );
+        Log.d(TAG, "Deleted row : " + row);
+        return row;
+    }
+
+    public static Branch getBranch(Context context, String branchId) {
+
+        String whereClause = DbProvider.COL_BRANCH_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {branchId};
+
+        Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_BRANCH,
+                null, whereClause, whereArgs, null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+
+            Branch branch = new Branch();
+            branch.setId(getStrVal(cursor, DbProvider.COL_BRANCH_ID));
+            branch.setName(getStrVal(cursor, DbProvider.COL_BRANCH_NAME));
+            branch.setAddress(getStrVal(cursor, DbProvider.COL_BRANCH_ADDRESS));
+            branch.setLat(getDblVal(cursor, DbProvider.COL_BRANCH_LAT));
+            branch.setLng(getDblVal(cursor, DbProvider.COL_BRANCH_LNG));
+            branch.setPhotoList(Util.getStringArray(getStrVal(cursor, DbProvider.COL_BRANCH_PHOTOS)));
+
+            cursor.close();
+            return branch;
+        }
+        return null;
+    }
+
     public static List<Branch> getBranchList(Context context) {
 
         Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_BRANCH,

@@ -40,35 +40,32 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/image_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_widget_box"
-            android:text="No Images added"
-            android:textSize="@dimen/text_header2" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/select_photos"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_widget_box"
-            android:text="Add Image"
-            android:textAllCaps="false" />
+            android:layout_marginTop="@dimen/form_top_padding">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_widget_box"
-            android:text="Select shop location on Map"
-            android:textSize="@dimen/text_header2" />
+            <TextView
+                android:id="@+id/image_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/padding_widget_box"
+                android:text="No Images added"
+                android:textSize="@dimen/text_header2" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/map_height"
-            android:layout_marginTop="@dimen/padding_widget_box"
-            android:background="@drawable/temp_map" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_photos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/padding_widget_box"
+                android:text="Add Images"
+                android:textAllCaps="false" />
+        </RelativeLayout>
+
 
         <com.jrinfolab.beautyshop.view.LoaderButton
             android:id="@+id/loader_button"
