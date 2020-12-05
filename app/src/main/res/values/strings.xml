@@ -11,7 +11,7 @@
     <string name="menu_wallet">Wallet</string>
     <string name="menu_branch_list">Branches</string>
     <string name="menu_employee_list">Employees</string>
-    <string name="menu_collections">Collections</string>
+    <string name="menu_service_list">Service List</string>
 
     <string name="menu_contact">Contact</string>
     <string name="menu_help">Help</string>

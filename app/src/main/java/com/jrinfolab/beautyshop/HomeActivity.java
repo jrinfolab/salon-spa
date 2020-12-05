@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.jrinfolab.beautyshop.ui.ListBranch;
 import com.jrinfolab.beautyshop.ui.ListEmployee;
+import com.jrinfolab.beautyshop.ui.ServiceList;
 import com.jrinfolab.beautyshop.ui.account.LoginActivity;
 import com.jrinfolab.beautyshop.ui.AddBranch;
 
@@ -88,6 +89,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_employee: {
                 Intent intent = new Intent(mContext, ListEmployee.class);
+                startActivity(intent);
+            }
+            break;
+
+            case R.id.nav_service_menu: {
+                Intent intent = new Intent(mContext, ServiceList.class);
                 startActivity(intent);
             }
             break;

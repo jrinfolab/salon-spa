@@ -80,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
                 timer.start();
                 Log.d(TAG, "permission granted");
             } else {
-                checkPermission();
+                finish();
+                //checkPermission();
             }
         }
     }
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO : add check for other permission also
         int result = mContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-        if(result == PackageManager.PERMISSION_GRANTED){
+        if (result == PackageManager.PERMISSION_GRANTED) {
 
         } else {
             boolean canRequestAgain = shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE);

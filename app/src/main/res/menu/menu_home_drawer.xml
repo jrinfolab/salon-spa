@@ -15,9 +15,9 @@
             android:icon="@drawable/ic_baseline_person_24"
             android:title="@string/menu_employee_list" />
         <item
-            android:id="@+id/nav_collection"
+            android:id="@+id/nav_service_menu"
             android:icon="@drawable/ic_baseline_money_24"
-            android:title="@string/menu_collections" />
+            android:title="@string/menu_service_list" />
     </group>
 
     <item android:title="Coummunicate">
