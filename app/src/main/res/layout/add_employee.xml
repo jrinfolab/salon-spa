@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,6 +19,7 @@
             android:background="@drawable/bg_salon_image_banner">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_centerInParent="true"
@@ -32,6 +34,22 @@
                     android:src="@drawable/img_user_default" />
 
             </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/capture_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/card_view"
+                android:src="@drawable/ic_camera_add_photo" />
+
+            <ImageView
+                android:id="@+id/browse_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/card_view"
+                android:src="@drawable/ic_gallary_add_photo" />
         </RelativeLayout>
 
         <LinearLayout
@@ -73,23 +91,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ipl_dob"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_widget_box"
-                android:gravity="center_horizontal"
-                android:hint="dd/mm/yyyy"
-                app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-                app:startIconTint="@color/colorPrimaryDark">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_dob"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ipl_yoe"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -121,14 +122,30 @@
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/action_add"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_widget_box"
-                android:text="Add Employee"
-                android:textAllCaps="false" />
+                android:layout_marginTop="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phone_number_text_field">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/branch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:hint="Branch Assigned"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.jrinfolab.beautyshop.view.LoaderButton
+                android:id="@+id/loader_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_widget_box" />
 
         </LinearLayout>
     </LinearLayout>

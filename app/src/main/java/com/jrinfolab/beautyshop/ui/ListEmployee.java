@@ -1,35 +1,41 @@
 package com.jrinfolab.beautyshop.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.jrinfolab.beautyshop.R;
+import com.jrinfolab.beautyshop.adapter.EmployeeListAdapter;
+import com.jrinfolab.beautyshop.db.DbHelper;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.pojo.Employee;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ListEmployee extends AppCompatActivity {
+
+    private static final String TAG = "ListEmployee";
 
     private TextView mEmptyInfo;
     private Button mActionAdd;
     private RelativeLayout mLayoutEmpty;
-    private ListView mListView;
+    private RecyclerView mListView;
+    private ExtendedFloatingActionButton mFab;
 
-    private ArrayList<Employee> mEmployeeList;
+    private List<Employee> mEmpList;
 
     private Context mContext;
 
@@ -47,23 +53,70 @@ public class ListEmployee extends AppCompatActivity {
         mActionAdd = findViewById(R.id.action_add);
         mLayoutEmpty = findViewById(R.id.layout_empty);
         mListView = findViewById(R.id.listview);
-
-        mEmployeeList = new ArrayList<>();
-
-        if (mEmployeeList.size() > 0) {
-            mListView.setVisibility(View.VISIBLE);
-            mLayoutEmpty.setVisibility(View.GONE);
-        } else {
-            mListView.setVisibility(View.GONE);
-            mLayoutEmpty.setVisibility(View.VISIBLE);
-        }
+        mFab = findViewById(R.id.fab);
 
         mActionAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, AddEmployee.class));
+                Intent intent = new Intent(mContext, AddEmployee.class);
+                intent.putExtra(Constant.IS_UPDATE, false);
+                startActivity(intent);
             }
         });
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AddEmployee.class);
+                intent.putExtra(Constant.IS_UPDATE, false);
+                startActivity(intent);
+            }
+        });
+
+        mListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    // Scroll Down
+                    if (mFab.isShown()) {
+                        mFab.hide();
+                    }
+                } else if (dy < 0) {
+                    // Scroll Up
+                    if (!mFab.isShown()) {
+                        mFab.show();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getEmpListFromDb();
+    }
+
+    private void getEmpListFromDb() {
+
+        mEmpList = DbHelper.getEmployeeList(mContext);
+
+        if (mEmpList != null && mEmpList.size() > 0) {
+
+            mListView.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.VISIBLE);
+            mLayoutEmpty.setVisibility(View.GONE);
+
+            EmployeeListAdapter adapter = new EmployeeListAdapter(mContext, mEmpList, clickListener);
+            mListView.setAdapter(adapter);
+            mListView.setLayoutManager(new LinearLayoutManager(this));
+
+        } else {
+            mListView.setVisibility(View.GONE);
+            mFab.setVisibility(View.GONE);
+            mLayoutEmpty.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -78,30 +131,42 @@ public class ListEmployee extends AppCompatActivity {
         }
     }
 
-
-    public class MyAdapter extends ArrayAdapter<Employee> {
-
-        private ArrayList<Employee> data;
-        private Context context;
-
-        public MyAdapter(@NonNull Context context, int resource, ArrayList<Employee> data) {
-            super(context, resource, data);
-            this.context = context;
-            this.data = data;
-        }
-
-        private int lastPosition = -1;
-
+    EmployeeListAdapter.ItemClickListener clickListener = new EmployeeListAdapter.ItemClickListener() {
         @Override
-        public View getView(int position, View view, ViewGroup parent) {
+        public void onItemClick(View view, int position) {
+            final Employee employee = mEmpList.get(position);
+            if (view.getId() == R.id.action_delete) {
 
-            Employee dataModel = getItem(position);
+                String message = "You want to delete '"+employee.getName()+"' from the employee list";
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Are you sure ?");
+                builder.setMessage(message);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        DbHelper.deleteEmployee(mContext, employee.getId());
+                        getEmpListFromDb();
+                    }
+                });
 
-            if (view == null) {
-                view = LayoutInflater.from(getContext()).inflate(R.layout.add_branch, parent, false);
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            } else if (view.getId() == R.id.action_edit) {
+                Intent intent = new Intent(mContext, AddEmployee.class);
+                intent.putExtra(Constant.IS_UPDATE, true);
+                intent.putExtra(Constant.DATA1, employee.getId());
+                startActivity(intent);
+            }else if (view.getId() == R.id.action_call) {
+                Uri uri  = Uri.fromParts("tel", employee.getPhone(), null);
+                Intent intent = new Intent(Intent.ACTION_DIAL,uri );
+                startActivity(intent);
             }
-
-            return view;
         }
-    }
+    };
 }

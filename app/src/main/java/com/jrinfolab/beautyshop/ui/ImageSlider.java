@@ -251,23 +251,11 @@ public class ImageSlider extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-
-                try {
-
-                    for (Uri uri : uriList) {
-                        File file = FileUtil.createTempImageFile(mContext);
-                        if (file == null) return;
-                        mImagePathList.add(file.getPath());
-                        FileOutputStream fos = new FileOutputStream(file);
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), uri);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        fos.flush();
-                        fos.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (Uri uri : uriList) {
+                    String path = FileUtil.copyImage(mContext, uri);
+                    mImagePathList.add(path);
+                    // TODO : update loader message like "Copying 1/7 file"
                 }
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

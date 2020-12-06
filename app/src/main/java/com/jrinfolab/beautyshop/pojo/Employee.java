@@ -34,26 +34,47 @@ public class Employee {
         this.imageUrl = imageUrl;
     }
 
-    public String getDob() {
-        return dob;
+    public String getBranchId() {
+        return branchId;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setBranchId(String branchId) {
+        this.branchId = branchId;
     }
 
-    public int getExperience() {
-        return experience;
+    public int getYoe() {
+        return yoe;
     }
 
-    public void setExperience(int experience) {
-        this.experience = experience;
+    public void setYoe(int yoe) {
+        this.yoe = yoe;
     }
 
     String name;
     String phone;
     String id;
     String imageUrl;
-    String dob;
-    int experience;
+    String branchId;
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+    String branchName;
+    String address;
+    int yoe;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
 }

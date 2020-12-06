@@ -46,7 +46,6 @@ public class ServiceList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.price_list);
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Service Menu");
 

@@ -17,22 +17,16 @@
  */
 package com.jrinfolab.beautyshop.db;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 
 import com.jrinfolab.beautyshop.helper.Util;
 import com.jrinfolab.beautyshop.pojo.Branch;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.jrinfolab.beautyshop.pojo.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +54,7 @@ public class DbHelper {
     public static int updateBranch(Context context, Branch branch) {
 
         String whereClause = DbProvider.COL_BRANCH_ID + EQUAL_QUESTION_MARK;
-        String[] whereArgs = { branch.getId()};
+        String[] whereArgs = {branch.getId()};
 
         ContentValues values = new ContentValues();
         values.put(DbProvider.COL_BRANCH_ID, branch.getId());
@@ -69,15 +63,15 @@ public class DbHelper {
         values.put(DbProvider.COL_BRANCH_LAT, branch.getLat());
         values.put(DbProvider.COL_BRANCH_LNG, branch.getLng());
         values.put(DbProvider.COL_BRANCH_PHOTOS, Util.getString(branch.getPhotoList()));
-        int row = context.getContentResolver().update(DbProvider.CONTENT_URI_BRANCH, values, whereClause, whereArgs );
+        int row = context.getContentResolver().update(DbProvider.CONTENT_URI_BRANCH, values, whereClause, whereArgs);
         Log.d(TAG, "Updated row : " + row);
         return row;
     }
 
     public static int deleteBranch(Context context, String branchId) {
         String whereClause = DbProvider.COL_BRANCH_ID + EQUAL_QUESTION_MARK;
-        String[] whereArgs = { branchId};
-        int row = context.getContentResolver().delete(DbProvider.CONTENT_URI_BRANCH, whereClause, whereArgs );
+        String[] whereArgs = {branchId};
+        int row = context.getContentResolver().delete(DbProvider.CONTENT_URI_BRANCH, whereClause, whereArgs);
         Log.d(TAG, "Deleted row : " + row);
         return row;
     }
@@ -139,12 +133,122 @@ public class DbHelper {
         return null;
     }
 
+
+    // EMPLOYEE RELATED DB HELPER
+
+    public static Uri addEmployee(Context context, Employee employee) {
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_EMP_ID, employee.getId());
+        values.put(DbProvider.COL_EMP_NAME, employee.getName());
+        values.put(DbProvider.COL_EMP_PHONE, employee.getPhone());
+        values.put(DbProvider.COL_EMP_YOE, employee.getYoe());
+        values.put(DbProvider.COL_EMP_ADDRESS, employee.getAddress());
+        values.put(DbProvider.COL_EMP_IMAGE_URL, employee.getImageUrl());
+        values.put(DbProvider.COL_EMP_BRANCH_ID, employee.getBranchId());
+        values.put(DbProvider.COL_EMP_BRANCH_NAME, employee.getBranchName());
+        Uri uri = context.getContentResolver().insert(DbProvider.CONTENT_URI_EMPLOYEE, values);
+        Log.d(TAG, "New employee added : " + uri.toString());
+        return uri;
+    }
+
+    public static int updateEmployee(Context context, Employee employee) {
+
+        String whereClause = DbProvider.COL_EMP_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {employee.getId()};
+
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_EMP_ID, employee.getId());
+        values.put(DbProvider.COL_EMP_NAME, employee.getName());
+        values.put(DbProvider.COL_EMP_PHONE, employee.getPhone());
+        values.put(DbProvider.COL_EMP_YOE, employee.getYoe());
+        values.put(DbProvider.COL_EMP_ADDRESS, employee.getAddress());
+        values.put(DbProvider.COL_EMP_IMAGE_URL, employee.getImageUrl());
+        values.put(DbProvider.COL_EMP_BRANCH_ID, employee.getBranchId());
+        values.put(DbProvider.COL_EMP_BRANCH_NAME, employee.getBranchName());
+        int row = context.getContentResolver().update(DbProvider.CONTENT_URI_EMPLOYEE, values, whereClause, whereArgs);
+        Log.d(TAG, "Updated employee row : " + row);
+        return row;
+    }
+
+    public static int deleteEmployee(Context context, String empId) {
+        String whereClause = DbProvider.COL_EMP_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {empId};
+        int row = context.getContentResolver().delete(DbProvider.CONTENT_URI_EMPLOYEE, whereClause, whereArgs);
+        Log.d(TAG, "Deleted row : " + row);
+        return row;
+    }
+
+    public static Employee getEmployee(Context context, String employeeId) {
+
+        String whereClause = DbProvider.COL_EMP_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {employeeId};
+
+        Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_EMPLOYEE,
+                null, whereClause, whereArgs, null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+
+            Employee employee = new Employee();
+            employee.setId(getStrVal(cursor, DbProvider.COL_EMP_ID));
+            employee.setName(getStrVal(cursor, DbProvider.COL_EMP_NAME));
+            employee.setPhone(getStrVal(cursor, DbProvider.COL_EMP_PHONE));
+            employee.setYoe(getIntVal(cursor, DbProvider.COL_EMP_YOE));
+            employee.setAddress(getStrVal(cursor, DbProvider.COL_EMP_ADDRESS));
+            employee.setImageUrl(getStrVal(cursor, DbProvider.COL_EMP_IMAGE_URL));
+            employee.setBranchId(getStrVal(cursor, DbProvider.COL_EMP_BRANCH_ID));
+            employee.setBranchName(getStrVal(cursor, DbProvider.COL_EMP_BRANCH_NAME));
+
+            cursor.close();
+            return employee;
+        }
+        return null;
+    }
+
+    public static List<Employee> getEmployeeList(Context context) {
+
+        Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_EMPLOYEE,
+                null, null, null, null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        if (cursor.getCount() > 0) {
+            List<Employee> employeeList = new ArrayList<Employee>();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Employee employee = new Employee();
+                employee.setId(getStrVal(cursor, DbProvider.COL_EMP_ID));
+                employee.setName(getStrVal(cursor, DbProvider.COL_EMP_NAME));
+                employee.setAddress(getStrVal(cursor, DbProvider.COL_EMP_ADDRESS));
+                employee.setPhone(getStrVal(cursor, DbProvider.COL_EMP_PHONE));
+                employee.setYoe(getIntVal(cursor, DbProvider.COL_EMP_YOE));
+                employee.setImageUrl(getStrVal(cursor, DbProvider.COL_EMP_IMAGE_URL));
+                employee.setBranchId(getStrVal(cursor, DbProvider.COL_EMP_BRANCH_ID));
+                employee.setBranchName(getStrVal(cursor, DbProvider.COL_EMP_BRANCH_NAME));
+                employeeList.add(employee);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return employeeList;
+        }
+        return null;
+    }
+
     private static String getStrVal(Cursor cursor, String key) {
         return cursor.getString(cursor.getColumnIndex(key));
     }
 
     private static double getDblVal(Cursor cursor, String key) {
         return cursor.getDouble(cursor.getColumnIndex(key));
+    }
+
+    private static int getIntVal(Cursor cursor, String key) {
+        return cursor.getInt(cursor.getColumnIndex(key));
     }
 
 /*

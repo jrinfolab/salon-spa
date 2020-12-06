@@ -1,30 +1,39 @@
 package com.jrinfolab.beautyshop;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.jrinfolab.beautyshop.db.DbHelper;
+import com.jrinfolab.beautyshop.pojo.Branch;
 import com.jrinfolab.beautyshop.ui.ListBranch;
 import com.jrinfolab.beautyshop.ui.ListEmployee;
 import com.jrinfolab.beautyshop.ui.ServiceList;
 import com.jrinfolab.beautyshop.ui.account.LoginActivity;
 import com.jrinfolab.beautyshop.ui.AddBranch;
 
+import java.util.List;
+
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    private RelativeLayout mRoolView;
 
     private Context mContext;
 
@@ -38,6 +47,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        mRoolView = findViewById(R.id.root_layout);
 
         setSupportActionBar(toolbar);
 
@@ -88,8 +98,35 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             break;
 
             case R.id.nav_employee: {
-                Intent intent = new Intent(mContext, ListEmployee.class);
-                startActivity(intent);
+
+                List<Branch> branches = DbHelper.getBranchList(mContext);
+                if(branches != null && branches.size() > 0) {
+                    Intent intent = new Intent(mContext, ListEmployee.class);
+                    startActivity(intent);
+                } else {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("No Branch Added");
+                    builder.setMessage("Employee can be added, after adding branch, please add a brach first");
+                    builder.setPositiveButton("Add Branch", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(new Intent(mContext, AddBranch.class));
+                        }
+                    });
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    builder.create().show();
+                    //showSnackBar("No branch added, Please add branch first");
+                }
+
             }
             break;
 
@@ -101,6 +138,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return true;
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar snackbar = Snackbar.make(mRoolView, message, Snackbar.LENGTH_LONG);
+             /*   .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                });*/
+        snackbar.show();
     }
 
     @Override

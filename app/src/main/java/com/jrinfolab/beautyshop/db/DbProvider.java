@@ -58,19 +58,21 @@ public class DbProvider extends ContentProvider {
     public static final String COL_EMP_ID        = "id";
     public static final String COL_EMP_NAME      = "name";
     public static final String COL_EMP_PHONE     = "phone";
-    public static final String COL_EMP_DOB       = "dob";
     public static final String COL_EMP_YOE       = "experience";
     public static final String COL_EMP_ADDRESS   = "address";
     public static final String COL_EMP_IMAGE_URL = "image_url";
+    public static final String COL_EMP_BRANCH_ID = "branch_id";
+    public static final String COL_EMP_BRANCH_NAME = "branch_name";
 
     static String CREATE_TABLE_EMPLOYEE = "CREATE TABLE " + TABLE_NAME_EMPLOYEE + " ("
             + COL_EMP_ID        + " TEXT              , "
             + COL_EMP_NAME      + " TEXT              , "
             + COL_EMP_PHONE     + " TEXT              , "
-            + COL_EMP_DOB       + " TEXT              , "
             + COL_EMP_YOE       + " INTEGER DEFAULT 1 , "
             + COL_EMP_ADDRESS   + " TEXT              , "
-            + COL_EMP_IMAGE_URL + " TEXT              )";
+            + COL_EMP_IMAGE_URL + " TEXT              ,"
+            + COL_EMP_BRANCH_ID + " TEXT              ,"
+            + COL_EMP_BRANCH_NAME + " TEXT             )";
 
     // Branch table columns
     public static final String COL_BRANCH_ID      = "id";
@@ -87,7 +89,6 @@ public class DbProvider extends ContentProvider {
             + COL_BRANCH_PHOTOS   + " TEXT               , "
             + COL_BRANCH_LAT      + " DOUBLE DEFAULT 1.0 , "
             + COL_BRANCH_LNG      + " DOUBLE DEFAULT 1.0 ) ";
-
 
     @Override
     public boolean onCreate() {
