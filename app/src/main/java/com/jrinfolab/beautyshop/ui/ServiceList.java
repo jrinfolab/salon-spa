@@ -2,6 +2,7 @@ package com.jrinfolab.beautyshop.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.adapter.ServiceListAdapter;
+import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.helper.JsonHelper;
 import com.jrinfolab.beautyshop.pojo.PriceGroup;
 import com.jrinfolab.beautyshop.pojo.PriceItem;
@@ -41,6 +43,8 @@ public class ServiceList extends AppCompatActivity {
     String[] mGroupNames;
     int mSelectedIndex;
 
+    boolean isItemRequested;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,8 @@ public class ServiceList extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Service Menu");
+
+        isItemRequested = getIntent().getBooleanExtra(Constant.DATA1, false);
 
         mContext = this;
 
@@ -62,7 +68,9 @@ public class ServiceList extends AppCompatActivity {
         mExpListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                groupAddUpdate(true, groupPosition);
+                if(!isItemRequested) {
+                    groupAddUpdate(true, groupPosition);
+                }
                 return true;
             }
         });
@@ -70,7 +78,13 @@ public class ServiceList extends AppCompatActivity {
         mExpListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                priceAddUpdate(true, groupPosition, childPosition);
+
+                if(isItemRequested) {
+                    sendPriceInfo(groupPosition, childPosition);
+                } else {
+                    priceAddUpdate(true, groupPosition, childPosition);
+                }
+
                 return true;
             }
         });
@@ -349,5 +363,16 @@ public class ServiceList extends AppCompatActivity {
         dialog.setCancelable(true);
 
         dialog.create().show();
+    }
+
+    private void sendPriceInfo(int grpIndex, int itemIndex) {
+        PriceGroup priceGroup = mGroupItems.get(grpIndex);
+        List<PriceItem> priceItems = priceGroup.getPriceItemList();
+
+        Intent intent = new Intent();
+        intent.putExtra(Constant.DATA1, priceItems.get(itemIndex).getName());
+        intent.putExtra(Constant.DATA2, priceItems.get(itemIndex).getPrice());
+        setResult(100, intent);
+        finish();
     }
 }

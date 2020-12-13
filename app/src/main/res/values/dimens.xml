@@ -7,8 +7,8 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="padding_tiny">2dp</dimen>
-    <dimen name="padding_xsmall">4dp</dimen>
-    <dimen name="padding_xxsmall">8dp</dimen>
+    <dimen name="padding_xxsmall">4dp</dimen>
+    <dimen name="padding_xsmall">8dp</dimen>
     <dimen name="padding_small">12dp</dimen>
     <dimen name="padding_large">16dp</dimen>
     <dimen name="padding_xlarge">20dp</dimen>

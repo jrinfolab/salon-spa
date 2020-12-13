@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Beauty Shop</string>
+    <string name="app_name">Salon-Spa</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -37,6 +37,7 @@
 
     <string name="text_branch">Branches</string>
     <string name="text_employee">Employee</string>
+    <string name="text_rupees_symbol">₹\u0020\u0020\u0020</string>
 
     <string name="add_salon">Add Salon</string>
     <string name="add_spa">Add Spa</string>

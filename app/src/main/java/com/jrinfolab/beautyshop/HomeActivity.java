@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -16,10 +20,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.jrinfolab.beautyshop.db.DbHelper;
 import com.jrinfolab.beautyshop.pojo.Branch;
+import com.jrinfolab.beautyshop.ui.AddBill;
 import com.jrinfolab.beautyshop.ui.ListBranch;
 import com.jrinfolab.beautyshop.ui.ListEmployee;
 import com.jrinfolab.beautyshop.ui.ServiceList;
@@ -34,6 +40,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private Toolbar toolbar;
     private RelativeLayout mRoolView;
+    private ImageView mButtonSwitchNavDrawer;
+    private ExtendedFloatingActionButton mFab;
 
     private Context mContext;
 
@@ -44,22 +52,43 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         mContext = this;
 
-        toolbar = findViewById(R.id.toolbar);
+        //   toolbar = findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        mButtonSwitchNavDrawer = findViewById(R.id.nav_drawer_button);
+        mFab = findViewById(R.id.action_add_bill);
         mRoolView = findViewById(R.id.root_layout);
 
-        setSupportActionBar(toolbar);
+        // setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Saloon Spa");
+        // getSupportActionBar().setTitle("Saloon Spa");
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+    /*    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
+*/
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
+
+        mButtonSwitchNavDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!drawerLayout.isDrawerOpen(Gravity.START)) {
+                    drawerLayout.openDrawer(Gravity.START);
+                } else {
+                    drawerLayout.closeDrawer(Gravity.END);
+                }
+            }
+        });
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AddBill.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -100,7 +129,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_employee: {
 
                 List<Branch> branches = DbHelper.getBranchList(mContext);
-                if(branches != null && branches.size() > 0) {
+                if (branches != null && branches.size() > 0) {
                     Intent intent = new Intent(mContext, ListEmployee.class);
                     startActivity(intent);
                 } else {
