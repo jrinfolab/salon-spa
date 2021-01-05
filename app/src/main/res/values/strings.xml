@@ -10,6 +10,7 @@
 
     <string name="menu_wallet">Wallet</string>
     <string name="menu_branch_list">Branches</string>
+    <string name="menu_offer_list">Offers</string>
     <string name="menu_employee_list">Employees</string>
     <string name="menu_service_list">Service List</string>
 

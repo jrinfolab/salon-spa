@@ -18,6 +18,11 @@
             android:id="@+id/nav_service_menu"
             android:icon="@drawable/ic_baseline_money_24"
             android:title="@string/menu_service_list" />
+
+        <item
+            android:id="@+id/nav_offer"
+            android:icon="@drawable/ic_drawer_menu_offer_black_24dp"
+            android:title="@string/menu_offer_list" />
     </group>
 
     <item android:title="Coummunicate">

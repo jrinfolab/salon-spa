@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:scrollbars="none">
@@ -8,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/screen_padding">
+        android:layout_margin="@dimen/screen_padding"
+        android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/ipl_name"
@@ -43,6 +44,28 @@
                 android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <RelativeLayout
+            android:layout_marginTop="@dimen/padding_xsmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/add_gst_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Include GST" />
+
+            <Button
+                android:id="@+id/btn_coupon"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Apply Coupon" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,47 +94,152 @@
                 android:text="Browse Menu" />
         </LinearLayout>
 
+
+
         <LinearLayout
             android:id="@+id/bill_info_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:id="@+id/divider1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/list_view"
-                android:background="@color/colorPrimary" />
-
-            <RelativeLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/divider1"
-                android:padding="@dimen/padding_small">
+                android:layout_margin="@dimen/padding_xxsmall"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="@dimen/padding_xxsmall">
 
-                <TextView
-                    android:id="@+id/total_price"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="250"
-                    android:textSize="@dimen/text_header2" />
+                    android:layout_margin="@dimen/padding_xsmall"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/rupee_symbol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/padding_large"
-                    android:layout_toLeftOf="@+id/total_price"
-                    android:text="Total"
-                    android:textSize="@dimen/text_header2" />
-            </RelativeLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <View
+                        android:id="@+id/divider1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimary" />
+
+                    <RelativeLayout
+                        android:id="@+id/layout_sub_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_small">
+
+                        <TextView
+                            android:id="@+id/sub_total_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:text="250"
+                            android:textSize="@dimen/text_header2" />
+
+                        <TextView
+                            android:id="@+id/rupee_symbol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/padding_large"
+                            android:layout_toLeftOf="@+id/sub_total_price"
+                            android:text="Total"
+                            android:textSize="@dimen/text_header2" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_gst"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_small">
+
+                        <TextView
+                            android:id="@+id/gst_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:text="250"
+                            android:textSize="@dimen/text_header2" />
+
+                        <TextView
+                            android:id="@+id/gst_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/padding_large"
+                            android:layout_toLeftOf="@+id/gst_price"
+                            android:text="GST 18%"
+                            android:textSize="@dimen/text_header2" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_coupon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_small"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/offer_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:text="250"
+                            android:textSize="@dimen/text_header2" />
+
+                        <TextView
+                            android:id="@+id/offer_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/padding_large"
+                            android:layout_toLeftOf="@+id/offer_price"
+                            android:text="Discount"
+                            android:textSize="@dimen/text_header2" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+
+                        android:id="@+id/layout_net_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_alignParentTop="true"
+                            android:background="@color/colorPrimary" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/padding_small">
+
+
+                            <TextView
+                                android:id="@+id/net_total_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:text="250"
+                                android:textSize="@dimen/text_header2" />
+
+                            <TextView
+                                android:id="@+id/net_total_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/padding_large"
+                                android:layout_toLeftOf="@+id/net_total_price"
+                                android:text="Net Total"
+                                android:textSize="@dimen/text_header2" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
 
 
             <com.jrinfolab.beautyshop.view.LoaderButton

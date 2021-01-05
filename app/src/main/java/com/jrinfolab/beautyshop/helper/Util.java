@@ -90,5 +90,7 @@ public class Util {
         return null;
     }
 
-
+    public static int getGstPrice(Context context, int amount) {
+        return (amount * Preference.getGstRate(context)) / 100;
+    }
 }
