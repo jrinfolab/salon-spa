@@ -46,6 +46,9 @@
     <string name="no_employee">No employee added yet</string>
     <string name="no_branch">No Branch Added</string>
     <string name="add_branch">Add Branch</string>
+
+    <string name="deny_permission_content">You have denied some of the permission\n\nWe could not proceed further without these permission enabled\n\nPlease allow all permission to serve you better</string>
+    <string name="blocked_permission_content">Please enable all required permission in settings, to serve you better</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

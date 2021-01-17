@@ -17,6 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.ui.AddBranch;
+import com.jrinfolab.beautyshop.ui.account.LoginActivity;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,11 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isLoggedIn = false;
 
-    private static final int PERMISSIONS_REQUEST_CODE = 1001;
+    private static final int PERMISSIONS_REQUEST_CODE = 100;
 
-    // Requesting permission to RECORD_AUDIO
-    private boolean permissionGranted = false;
-    private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+    private String[] mPermisssionList = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CAMERA};
 
 
     @Override
@@ -41,12 +46,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         mContext = this;
         isLoggedIn = Preference.isLoggedId(mContext);
+
+        checkPermission();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        requestPermission();
     }
 
     CountDownTimer timer = new CountDownTimer(HOLD_TIME, HOLD_TIME / SECOND) {
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, HomeActivity.class);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(mContext, HomeActivity.class);
+                Intent intent = new Intent(mContext, LoginActivity.class);
                 startActivity(intent);
             }
         }
@@ -75,52 +81,89 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+
+            boolean isDenied = false;
+            boolean isBlocked = false;
+
+            for (int i = 0; i < permissions.length; i++) {
+
+                String permissionItem = permissions[i];
+
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+
+                    isDenied = true;
+
+                    boolean canRequestAgain = shouldShowRequestPermissionRationale(permissionItem);
+
+                    if (!canRequestAgain) {
+                        isBlocked = true;
+                    }
+                }
+            }
+
+            if (!isDenied && !isBlocked) {
                 timer.start();
-                Log.d(TAG, "permission granted");
-            } else {
-                finish();
-                //checkPermission();
+            } else if (isDenied && isBlocked) {
+                showBlockedDialog();
+            } else if (isDenied && !isBlocked) {
+                showDeniedDialog();
             }
         }
     }
 
     public void checkPermission() {
-        // TODO : add check for other permission also
-        int result = mContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-        if (result == PackageManager.PERMISSION_GRANTED) {
+        boolean isDenied = false;
 
-        } else {
-            boolean canRequestAgain = shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (canRequestAgain) {
-                finish();
+        ArrayList<String> deniedPermissionList = new ArrayList<>();
+
+        for (String permissionItem : mPermisssionList) {
+            int result = mContext.checkSelfPermission(permissionItem);
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, permissionItem + " : Granted");
             } else {
-                Log.d(TAG, "permission denied, and opted 'Never ask again'");
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-                dialog.setMessage("Please enable permission in settings, to serve you better");
-                dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    }
-                });
-                dialog.create().show();
+                deniedPermissionList.add(permissionItem);
+                isDenied = true;
+                Log.d(TAG, permissionItem + " : Denied");
             }
+        }
+
+        if (isDenied) {
+            requestPermissions(deniedPermissionList.toArray(new String[deniedPermissionList.size()]), PERMISSIONS_REQUEST_CODE);
+        } else {
+            timer.start();
         }
     }
 
-    public void requestPermission() {
-        try {
-            String[] permissionList = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-            requestPermissions(permissionList, 100);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void showDeniedDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        dialog.setMessage(getString(R.string.deny_permission_content));
+        dialog.setCancelable(false);// Cannot close the dialog, as it is mandatory
+        dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                checkPermission();
+            }
+        });
+        dialog.create().show();
+    }
+
+    private void showBlockedDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        dialog.setMessage(getString(R.string.blocked_permission_content));
+        dialog.setCancelable(false);// Cannot close the dialog, as it is mandatory
+        dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+                finish();
+            }
+        });
+        dialog.create().show();
     }
 }
