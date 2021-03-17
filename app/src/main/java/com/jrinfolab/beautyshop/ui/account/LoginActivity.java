@@ -2,6 +2,7 @@ package com.jrinfolab.beautyshop.ui.account;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,12 +34,12 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText mEditPhone;
+    private TextInputEditText mEditPhone, mEditPassword;
     private Button mActionRegister;
-    private TextInputLayout tiplPhone;
+    private TextInputLayout tiplPhone, tiplPassword;
     private LinearLayout mLayoutPhone;
     private ProgressBar mProgressBar;
-    private LoaderButton mLoaderButton;
+    private LoaderButton mLoaderButtonLogin, mLoaderButtonOtp;
 
     private Context mContext;
     private TextView testView;
@@ -53,26 +54,68 @@ public class LoginActivity extends AppCompatActivity {
         mContext = this;
 
         mEditPhone = findViewById(R.id.text_phone);
+        mEditPassword = findViewById(R.id.text_password);
         mLayoutPhone = findViewById(R.id.layout_phone);
         tiplPhone = findViewById(R.id.text_ipl_phone);
+        tiplPassword = findViewById(R.id.ipl_password);
         mProgressBar = findViewById(R.id.progress_circular);
-        mLoaderButton = findViewById(R.id.loader_button);
+        mLoaderButtonLogin = findViewById(R.id.loader_button_login);
+        mLoaderButtonOtp = findViewById(R.id.loader_button_otp);
         mActionRegister = findViewById(R.id.action_register);
 
-        mLoaderButton.setText("Receive OTP", "Getting OTP Code", false);
-
-        mLoaderButton.setOnClickListener(new View.OnClickListener() {
+        mLoaderButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.hideKeyboard(mContext, v);
-                makeServerCall();
+
+                boolean validation = true;
+
+                String phoneEmail = mEditPhone.getText().toString();
+                String password = mEditPassword.getText().toString();
+
+                boolean isValidEmail = Util.isValidEmail(phoneEmail);
+                boolean isValidPhone = Util.isValidPhone(phoneEmail);
+
+                if (!isValidEmail && !isValidPhone) {
+                    tiplPhone.setError("Enter valid phone number or email id");
+                    validation = false;
+                }
+
+                if (!Util.isValidPassword(password)) {
+                    validation = false;
+                    tiplPassword.setError("Enter valid password");
+                }
+
+                if (validation) makeServerCall();
             }
         });
+
+        mLoaderButtonOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                boolean validation = true;
+
+                String phoneEmail = mEditPhone.getText().toString();
+
+                boolean isValidEmail = Util.isValidEmail(phoneEmail);
+                boolean isValidPhone = Util.isValidPhone(phoneEmail);
+
+                if (!isValidEmail && !isValidPhone) {
+                    tiplPhone.setError("Enter valid phone number or email id");
+                    validation = false;
+                }
+                if (validation) makeServerCall();
+
+            }
+        });
+
+        mLoaderButtonLogin.setText("Login", "Please wait...", false);
+        mLoaderButtonOtp.setText("Receive OTP", "Please wait...", false);
 
         mActionRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, RegisterActivity.class));
+                startActivity(new Intent(mContext, AddEditUser.class));
             }
         });
 
@@ -102,6 +145,21 @@ public class LoginActivity extends AppCompatActivity {
                 tiplPhone.setErrorEnabled(false);
             }
         });
+
+        mEditPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                tiplPassword.setErrorEnabled(false);
+            }
+        });
     }
 
     private void makeServerCall() {
@@ -109,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         if (mEnteredPhoneNumber.length() < 10) {
             tiplPhone.setError("Please enter 10 digit mobile number");
         } else {
-            mLoaderButton.showLoader(true);
+            mLoaderButtonLogin.showLoader(true);
             MyVolley.getInstance(mContext).addToRequestQueue(otpRequest);
         }
     }
@@ -120,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    mLoaderButton.showLoader(false);
+                    mLoaderButtonLogin.showLoader(false);
                     Intent intent = new Intent(mContext, OtpActivity.class);
                     intent.putExtra(Constant.PHONE, mEnteredPhoneNumber);
                     startActivity(intent);

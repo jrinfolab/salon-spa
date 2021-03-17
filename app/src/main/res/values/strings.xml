@@ -18,10 +18,15 @@
     <string name="menu_help">Help</string>
     <string name="menu_logout">Logout</string>
 
-
-    <string name="text_phone_number">Phone Number</string>
+    <string name="text_phone_number">Phone</string>
+    <string name="text_phone_or_email">Phone / Email ID</string>
     <string name="text_name">Name</string>
+    <string name="text_brand_name">Brand Name</string>
     <string name="text_phone">Phone</string>
+    <string name="text_email">Email</string>
+    <string name="text_email_optional">Email (Optional)</string>
+    <string name="text_password">Password</string>
+    <string name="text_confirm_password">Confirm Password</string>
     <string name="text_next">Next</string>
     <string name="text_login">Login</string>
     <string name="text_otp_title">OTP Verification</string>
@@ -47,12 +52,13 @@
     <string name="no_branch">No Branch Added</string>
     <string name="add_branch">Add Branch</string>
 
+    <string name="verify_email">Verify Email</string>
+    <string name="verify_phone">Verify Phone</string>
+    <string name="text_verified">Verified</string>
+
     <string name="deny_permission_content">You have denied some of the permission\n\nWe could not proceed further without these permission enabled\n\nPlease allow all permission to serve you better</string>
     <string name="blocked_permission_content">Please enable all required permission in settings, to serve you better</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
+
     <string name="hello_world">Hello Square World!</string>
     <string name="file_provider_name">salonspafileprovider</string>
 

@@ -31,12 +31,16 @@
         </activity>
 
         <activity
-            android:name=".ui.account.LoginActivity"
-            android:theme="@style/AppTheme.NoToolbar" />
+            android:name=".ui.account.LoginActivity"  />
 
         <activity
-            android:name=".ui.account.RegisterActivity"
-            android:theme="@style/AppTheme.NoToolbar" />
+            android:name=".ui.account.AddEditUser"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoToolbar"/>
+
+        <activity
+            android:name=".ui.account.AddEditBrand"
+            android:theme="@style/ThemeSinglePage" />
 
         <activity
             android:name=".ui.account.OtpActivity"

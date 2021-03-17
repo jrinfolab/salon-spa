@@ -1,16 +1,11 @@
 package com.jrinfolab.beautyshop.helper;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,8 +16,6 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class Util {
 
@@ -90,7 +83,37 @@ public class Util {
         return null;
     }
 
+    public static boolean isValidPhone(String phone) {
+
+        String errorMessage;
+        if (phone.contains(" ")) {
+            errorMessage = "Password cannot contain space";
+            return false;
+        } else if (phone.length() < 10 || phone.length() > 10 || !phone.matches("[0-9]+")) {
+            errorMessage = "Password should be 8 character";
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidEmail(String email) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailPattern);
+    }
+
     public static int getGstPrice(Context context, int amount) {
         return (amount * Preference.getGstRate(context)) / 100;
+    }
+
+    public static boolean isValidPassword(String password) {
+        String errorMessage;
+        if (password.contains(" ")) {
+            errorMessage = "Password cannot contain space";
+            return false;
+        } else if (password.length() < 8) {
+            errorMessage = "Password should be 8 character";
+            return false;
+        }
+        return true;
     }
 }

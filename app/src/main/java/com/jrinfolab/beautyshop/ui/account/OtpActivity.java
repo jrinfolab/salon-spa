@@ -19,6 +19,7 @@ import com.jrinfolab.beautyshop.helper.Constant;
 import com.jrinfolab.beautyshop.HomeActivity;
 import com.jrinfolab.beautyshop.helper.Preference;
 import com.jrinfolab.beautyshop.R;
+import com.jrinfolab.beautyshop.helper.Util;
 
 public class OtpActivity extends AppCompatActivity {
 
@@ -50,7 +51,9 @@ public class OtpActivity extends AppCompatActivity {
     private Intent mIntent;
     private Context mContext;
     private String mPhoneNumber;
-    private EditText[] editTexts;
+
+    private boolean mIsMailOtp, mIsPhoneOtp;
+    private String mPhoneOrMail;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,29 +72,46 @@ public class OtpActivity extends AppCompatActivity {
         mLayResendOtp = findViewById(R.id.layout4);
         mEditOtp = findViewById(R.id.edit_otp);
 
-        mLayResendOtp.setVisibility(View.GONE);
-        mLayAutoCapture.setVisibility(View.VISIBLE);
+        mIsMailOtp = mIntent.getIntExtra(Constant.DATA1, -1) == Constant.REQ_CODE_EMAIL_VERIFICATION;
+        mIsPhoneOtp = mIntent.getIntExtra(Constant.DATA1, -1) == Constant.REQ_CODE_PHONE_VERIFICATION;
+        mPhoneOrMail = mIntent.getStringExtra(Constant.DATA2);
 
-        mPhoneNumber = mIntent.getStringExtra(Constant.PHONE);
-        mTextPhone.setText(mPhoneNumber);
+        if (mIsMailOtp) {
+            mLayAutoCapture.setVisibility(View.GONE);
+            mLayResendOtp.setVisibility(View.VISIBLE);
+        } else {
+            mLayResendOtp.setVisibility(View.GONE);
+            mLayAutoCapture.setVisibility(View.VISIBLE);
+        }
+
+        mTextPhone.setText(mPhoneOrMail);
 
         mBtnResend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mLayResendOtp.setVisibility(View.GONE);
-                mLayAutoCapture.setVisibility(View.VISIBLE);
-                mEditOtp.setText("");
-                mBtnVerify.setEnabled(false);
-                mTimer.start();
+
+                if (mIsPhoneOtp) {
+                    mLayResendOtp.setVisibility(View.GONE);
+                    mLayAutoCapture.setVisibility(View.VISIBLE);
+                    mEditOtp.setText("");
+                    mBtnVerify.setEnabled(false);
+                    mTimer.start();
+                }
+
+                // Trigger server call to resend otp
+                Util.showToast(mContext, "Make server call");
             }
         });
 
         mBtnVerify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Preference.setIsLoggedIn(mContext, true);
-                Intent intent = new Intent(mContext, HomeActivity.class);
-                startActivity(intent);
+                Util.hideKeyboard(mContext, view);
+                Intent intent = new Intent();
+                intent.putExtra(Constant.DATA1, mIsMailOtp ? Constant.REQ_CODE_EMAIL_VERIFICATION : Constant.REQ_CODE_PHONE_VERIFICATION);
+                intent.putExtra(Constant.DATA2, true);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
 
@@ -99,8 +119,6 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                startActivity(intent);
             }
         });
 
@@ -123,6 +141,17 @@ public class OtpActivity extends AppCompatActivity {
         });
 
         mBtnVerify.setEnabled(false);
-        mTimer.start();
+
+        if (mIsPhoneOtp) mTimer.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent();
+        intent.putExtra(Constant.DATA1, mIsMailOtp ? Constant.REQ_CODE_EMAIL_VERIFICATION : Constant.REQ_CODE_PHONE_VERIFICATION);
+        intent.putExtra(Constant.DATA2, false);
+        setResult(RESULT_CANCELED, intent);
     }
 }

@@ -34,17 +34,48 @@
                 android:id="@+id/text_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/text_phone_number"
-                android:inputType="numberDecimal"
-                android:maxLength="10" />
+                android:hint="@string/text_phone_or_email"
+                android:inputType="text"
+                android:maxLength="25" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ipl_password"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_top_padding"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_password"
+                android:inputType="textPassword"
+                android:maxLength="12" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.jrinfolab.beautyshop.view.LoaderButton
-            android:id="@+id/loader_button"
+            android:id="@+id/loader_button_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_xxlarge" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/or"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/form_top_padding"
+            android:gravity="center_horizontal"
+            android:text="OR" />
+
+        <com.jrinfolab.beautyshop.view.LoaderButton
+            android:id="@+id/loader_button_otp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_top_padding" />
 
     </LinearLayout>
 

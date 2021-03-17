@@ -18,4 +18,6 @@ public class Constant {
     public static final String DATA2 = "data2";
     public static final String DATA3 = "data3";
     public static final int REQ_CODE_IMAGE_LIST = 200;
+    public static final int REQ_CODE_PHONE_VERIFICATION = 201;
+    public static final int REQ_CODE_EMAIL_VERIFICATION = 202;
 }
