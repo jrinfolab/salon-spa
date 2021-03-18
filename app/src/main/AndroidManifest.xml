@@ -67,6 +67,10 @@
             android:theme="@style/ThemeSinglePage" />
 
         <activity
+            android:name=".ui.budget.CategoryList"
+            android:theme="@style/ThemeSinglePage" />
+
+        <activity
             android:name=".ui.AddEmployee"
             android:theme="@style/ThemeSinglePage" />
 

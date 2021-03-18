@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="default_category_name">
+        <item>Clothes</item>
+        <item>Shopping</item>
+        <item>Food</item>
+        <item>Bills</item>
+        <item>Travel</item>
+        <item>Family</item>
+        <item>Salary</item>
+    </string-array>
+
+    <integer-array name="default_category_type">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+</resources>

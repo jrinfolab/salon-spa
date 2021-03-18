@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.jrinfolab.beautyshop.helper.Util;
 import com.jrinfolab.beautyshop.pojo.Branch;
+import com.jrinfolab.beautyshop.pojo.Category;
 import com.jrinfolab.beautyshop.pojo.Employee;
 
 import java.util.ArrayList;
@@ -235,6 +236,63 @@ public class DbHelper {
             }
             cursor.close();
             return employeeList;
+        }
+        return null;
+    }
+
+    public static Uri addCategory(Context context, String name, int type) {
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_CATEGORY_NAME, name);
+        values.put(DbProvider.COL_CATEGORY_TYPE, type);
+        Uri uri = context.getContentResolver().insert(DbProvider.CONTENT_URI_CATEGORY, values);
+        Log.d(TAG, "New category added : " + uri.toString());
+        return uri;
+    }
+
+    public static void updateCategory(Context context, String name, int type, int id) {
+
+        String whereClause = DbProvider.COL_CATEGORY_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {String.valueOf(id)};
+
+        ContentValues values = new ContentValues();
+        values.put(DbProvider.COL_CATEGORY_NAME, name);
+        values.put(DbProvider.COL_CATEGORY_TYPE, type);
+        int updatedRows = context.getContentResolver().update(DbProvider.CONTENT_URI_CATEGORY, values,
+                whereClause, whereArgs);
+        Log.d(TAG, "category updated : " + updatedRows);
+    }
+
+    public static int deleteCategory(Context context, int catId) {
+        String whereClause = DbProvider.COL_CATEGORY_ID + EQUAL_QUESTION_MARK;
+        String[] whereArgs = {String.valueOf(catId)};
+        int row = context.getContentResolver().delete(DbProvider.CONTENT_URI_CATEGORY, whereClause, whereArgs);
+        Log.d(TAG, "Deleted row : " + row);
+        return row;
+    }
+
+    public static List<Category> getCategoryList(Context context) {
+
+        Cursor cursor = context.getContentResolver().query(DbProvider.CONTENT_URI_CATEGORY,
+                null, null, null, null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        if (cursor.getCount() > 0) {
+            List categoryArrayList = new ArrayList<Category>();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Category branch = new Category(
+                        getIntVal(cursor, DbProvider.COL_CATEGORY_ID),
+                        getStrVal(cursor, DbProvider.COL_CATEGORY_NAME),
+                        getIntVal(cursor, DbProvider.COL_CATEGORY_TYPE)
+                );
+                categoryArrayList.add(branch);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return categoryArrayList;
         }
         return null;
     }

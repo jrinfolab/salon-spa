@@ -38,4 +38,8 @@
     <style name="RoundImageView" parent="">
         <item name="cornerSize">20%</item>
     </style>
+
+    <style name="CategoryRoundImageView" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

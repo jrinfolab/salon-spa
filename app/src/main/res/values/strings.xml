@@ -10,6 +10,7 @@
 
     <string name="menu_wallet">Wallet</string>
     <string name="menu_branch_list">Branches</string>
+    <string name="menu_budget">Budget</string>
     <string name="menu_offer_list">Offers</string>
     <string name="menu_employee_list">Employees</string>
     <string name="menu_service_list">Service List</string>
@@ -50,7 +51,9 @@
     <string name="title_activity_add_branch">AddBranchActivity</string>
     <string name="no_employee">No employee added yet</string>
     <string name="no_branch">No Branch Added</string>
+    <string name="no_category">No Category Added</string>
     <string name="add_branch">Add Branch</string>
+    <string name="add_category">Add Category</string>
 
     <string name="verify_email">Verify Email</string>
     <string name="verify_phone">Verify Phone</string>

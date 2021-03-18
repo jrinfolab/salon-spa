@@ -126,6 +126,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
 
+            case R.id.nav_budget: {
+                Intent intent = new Intent(mContext, ListBranch.class);
+                startActivity(intent);
+            }
+            break;
+
             case R.id.nav_offer: {
                 Intent intent = new Intent(mContext, ListBranch.class);
                 startActivity(intent);

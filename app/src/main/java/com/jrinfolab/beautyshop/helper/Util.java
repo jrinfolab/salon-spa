@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.jrinfolab.beautyshop.R;
+import com.jrinfolab.beautyshop.db.DbHelper;
+import com.jrinfolab.beautyshop.pojo.Category;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -115,5 +119,18 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    public static void insertDefaultCategory(Context context) {
+
+        List<Category> categoryList = DbHelper.getCategoryList(context);
+
+        if (categoryList == null || categoryList.size() <= 0) {
+            String[] names = context.getResources().getStringArray(R.array.default_category_name);
+            int[] type = context.getResources().getIntArray(R.array.default_category_type);
+            for (int i = 0; i < names.length; i++) {
+                DbHelper.addCategory(context, names[i], type[i]);
+            }
+        }
     }
 }
