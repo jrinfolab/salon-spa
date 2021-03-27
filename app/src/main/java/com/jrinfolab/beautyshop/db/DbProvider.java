@@ -88,12 +88,12 @@ public class DbProvider extends ContentProvider {
     public static final String COL_BRANCH_LNG = "longitude";
 
     static String CREATE_TABLE_BRANCH = "CREATE TABLE " + TABLE_NAME_BRANCH + " ("
-            + COL_BRANCH_ID + " TEXT               , "
-            + COL_BRANCH_NAME + " TEXT               , "
+            + COL_BRANCH_ID      + " TEXT               , "
+            + COL_BRANCH_NAME    + " TEXT               , "
             + COL_BRANCH_ADDRESS + " TEXT               , "
-            + COL_BRANCH_PHOTOS + " TEXT               , "
-            + COL_BRANCH_LAT + " DOUBLE DEFAULT 1.0 , "
-            + COL_BRANCH_LNG + " DOUBLE DEFAULT 1.0 ) ";
+            + COL_BRANCH_PHOTOS  + " TEXT               , "
+            + COL_BRANCH_LAT     + " DOUBLE DEFAULT 1.0 , "
+            + COL_BRANCH_LNG     + " DOUBLE DEFAULT 1.0 ) ";
 
     // Category table columns
     public static final String COL_CATEGORY_ID = "id";
@@ -107,14 +107,19 @@ public class DbProvider extends ContentProvider {
 
     // Budget table columns
     public static final String COL_BUDGET_ID = "id";
-    public static final String COL_CAT_ID = "cat_id";
-    public static final String COL_CAT_NAME = "cat_name";
-    public static final String COL_CAT_TYPE = "cat_type";
+    public static final String COL_BUDGET_CATEGORY = "category";
+    public static final String COL_BUDGET_NOTE = "note";
+    public static final String COL_BUDGET_DATE = "date";
+    public static final String COL_BUDGET_AMOUNT = "amount";
+    public static final String COL_BUDGET_TYPE = "type";
 
     static String CREATE_TABLE_BUDGET = "CREATE TABLE " + TABLE_NAME_BUDGET + " ("
-            + COL_BUDGET_ID + " INTEGER PRIMARY KEY AUTOINCREMENT  , "
-            + COL_CATEGORY_NAME + " TEXT              , "
-            + COL_CATEGORY_TYPE + " INTEGER DEFAULT 0 )"; // 0-expense, 1-income
+            + COL_BUDGET_ID       + " INTEGER PRIMARY KEY AUTOINCREMENT  , "
+            + COL_BUDGET_CATEGORY + " TEXT              , "
+            + COL_BUDGET_NOTE     + " TEXT              , "
+            + COL_BUDGET_DATE     + " TEXT              , "
+            + COL_BUDGET_AMOUNT   + " INTEGER           , "
+            + COL_BUDGET_TYPE     + " INTEGER DEFAULT 0 )"; // 0-expense, 1-income
 
     @Override
     public boolean onCreate() {
@@ -205,6 +210,4 @@ public class DbProvider extends ContentProvider {
         if (CONTENT_URI_BUDGET.equals(uri)) return TABLE_NAME_BUDGET;
         return null;
     }
-
-
 }

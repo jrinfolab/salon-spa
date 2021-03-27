@@ -2,6 +2,7 @@ package com.jrinfolab.beautyshop.ui.budget;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.adapter.CategoryListAdapter;
 import com.jrinfolab.beautyshop.db.DbHelper;
@@ -157,14 +160,13 @@ public class CategoryList extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.cateogty_detail, viewGroup, false);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
-        final AlertDialog dialog = builder.create();
 
-        final EditText name = view.findViewById(R.id.edit_name);
+        final TextInputEditText catName = view.findViewById(R.id.edit_name);
+        TextInputLayout iplCatName = view.findViewById(R.id.ipl_name);
         final RadioButton radioIncome = view.findViewById(R.id.radio_income);
         final RadioButton radioExpense = view.findViewById(R.id.radio_expense);
-        ImageView delete = view.findViewById(R.id.action_delete);
-        Button add = view.findViewById(R.id.action_add);
-        Button cancel = view.findViewById(R.id.action_cancel);
+
+        String buttonText = isUpdate ? "Update" : "Add";
 
         radioExpense.setChecked(true);
         radioIncome.setChecked(false);
@@ -193,49 +195,43 @@ public class CategoryList extends AppCompatActivity {
         });
 
         if (isUpdate) {
-
-            name.setText(category.getName());
+            catName.setText(category.getName());
             catTyp.set(category.getType());
-
             radioExpense.setChecked(catTyp.get() == 0);
             radioIncome.setChecked(catTyp.get() == 1);
-
-            add.setText("Update");
-
-        } else {
-            delete.setVisibility(View.GONE);
         }
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-            }
-        });
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                DbHelper.deleteCategory(mContext, category.getId());
-                updateUI();
-            }
-        });
-
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-
                 if (isUpdate) {
-                    DbHelper.updateCategory(mContext, name.getText().toString(), catTyp.get(), category.getId());
+                    DbHelper.updateCategory(mContext, catName.getText().toString(), catTyp.get(), category.getId());
                 } else {
-                    DbHelper.addCategory(mContext, name.getText().toString(), catTyp.get());
+                    DbHelper.addCategory(mContext, catName.getText().toString(), catTyp.get());
                 }
-
                 updateUI();
             }
         });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        if(isUpdate) {
+            builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DbHelper.deleteCategory(mContext, category.getId());
+                    updateUI();
+                }
+            });
+        }
+
+        AlertDialog dialog = builder.create();
 
         dialog.show();
     }

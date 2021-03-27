@@ -28,6 +28,7 @@ import com.jrinfolab.beautyshop.R;
 import com.jrinfolab.beautyshop.helper.Util;
 import com.jrinfolab.beautyshop.network.MyVolley;
 import com.jrinfolab.beautyshop.network.ServerUrl;
+import com.jrinfolab.beautyshop.ui.budget.BudgetList;
 import com.jrinfolab.beautyshop.ui.budget.CategoryList;
 import com.jrinfolab.beautyshop.view.LoaderButton;
 
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
         mActionRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, CategoryList.class));
+                startActivity(new Intent(mContext, BudgetList.class));
             }
         });
 

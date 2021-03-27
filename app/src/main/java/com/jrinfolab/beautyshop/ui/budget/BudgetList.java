@@ -1,40 +1,36 @@
 package com.jrinfolab.beautyshop.ui.budget;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.adapter.BranchListAdapter;
-import com.jrinfolab.beautyshop.db.DbHelper;
-import com.jrinfolab.beautyshop.helper.Constant;
-import com.jrinfolab.beautyshop.pojo.Branch;
-import com.jrinfolab.beautyshop.ui.AddBranch;
+import com.jrinfolab.beautyshop.adapter.BudgetListAdapter;
+import com.jrinfolab.beautyshop.db.DbHelperBudget;
+import com.jrinfolab.beautyshop.pojo.Budget;
 
 import java.util.List;
 
 public class BudgetList extends AppCompatActivity {
 
-    private static final String TAG = "ListBranch";
+    private static final String TAG = "ListBudget";
 
     private TextView mEmptyInfo;
-    private Button mActionAdd;
-    private RelativeLayout mLayoutEmpty;
     private RecyclerView mListView;
     private ExtendedFloatingActionButton mFab;
-
-    private List<Branch> mBranchList;
-
+    private List<Budget> mTransactionList;
     private Context mContext;
 
     @Override
@@ -44,28 +40,17 @@ public class BudgetList extends AppCompatActivity {
 
         mContext = this;
 
-       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Branch List");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Budget List");
 
         mEmptyInfo = findViewById(R.id.empty_info);
-        mActionAdd = findViewById(R.id.action_add);
-        mLayoutEmpty = findViewById(R.id.layout_empty);
         mListView = findViewById(R.id.listview);
         mFab = findViewById(R.id.fab);
-
-        mActionAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(mContext, AddBranch.class));
-            }
-        });
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, AddBranch.class);
-                intent.putExtra(Constant.IS_UPDATE, false);
-                startActivity(intent);
+                showDialog(false, null);
             }
         });
 
@@ -91,27 +76,25 @@ public class BudgetList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getBranchListFromDb();
+        updateUI();
     }
 
-    private void getBranchListFromDb() {
+    private void updateUI() {
 
-        mBranchList = DbHelper.getBranchList(mContext);
+        mTransactionList = DbHelperBudget.getBudgetList(mContext);
 
-        if (mBranchList != null && mBranchList.size() > 0) {
+        if (mTransactionList != null && mTransactionList.size() > 0) {
 
+            mEmptyInfo.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
-            mFab.setVisibility(View.VISIBLE);
-            mLayoutEmpty.setVisibility(View.GONE);
 
-            BranchListAdapter adapter = new BranchListAdapter(mContext, mBranchList, clickListener);
+            BudgetListAdapter adapter = new BudgetListAdapter(mContext, mTransactionList, clickListener);
             mListView.setAdapter(adapter);
             mListView.setLayoutManager(new LinearLayoutManager(this));
 
         } else {
             mListView.setVisibility(View.GONE);
-            mFab.setVisibility(View.GONE);
-            mLayoutEmpty.setVisibility(View.VISIBLE);
+            mEmptyInfo.setVisibility(View.VISIBLE);
         }
     }
 
@@ -127,19 +110,74 @@ public class BudgetList extends AppCompatActivity {
         }
     }
 
-    BranchListAdapter.ItemClickListener clickListener = new BranchListAdapter.ItemClickListener() {
+    BudgetListAdapter.ItemClickListener clickListener = new BudgetListAdapter.ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Branch branch = mBranchList.get(position);
-            if (view.getId() == R.id.action_delete_branch) {
-                DbHelper.deleteBranch(mContext, branch.getId());
-                getBranchListFromDb();
-            } else if (view.getId() == R.id.action_edit_info) {
-                Intent intent = new Intent(mContext, AddBranch.class);
-                intent.putExtra(Constant.IS_UPDATE, true);
-                intent.putExtra(Constant.DATA1, branch.getId());
-                startActivity(intent);
+            Budget budget = mTransactionList.get(position);
+            if (view.getId() == R.id.root_layout) {
+                showDialog(true, budget);
             }
         }
     };
+
+    public void showDialog(final boolean isUpdate, final Budget budget) {
+
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_budget_detail, viewGroup, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+
+        final TextInputEditText category = view.findViewById(R.id.edit_category);
+        final TextInputEditText note = view.findViewById(R.id.edit_note);
+        final TextInputEditText amount = view.findViewById(R.id.edit_amount);
+
+        String buttonText = isUpdate ? "Update" : "Add";
+
+        if (isUpdate) {
+            category.setText(budget.getCategory());
+            note.setText(budget.getNote());
+            amount.setText(budget.getAmount()+"");
+        }
+
+        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if (isUpdate) {
+                    budget.setCategory(category.getText().toString());
+                    budget.setAmount(Integer.parseInt(amount.getText().toString()));
+                    budget.setNote(note.getText().toString());
+                    DbHelperBudget.updateBudget(mContext, budget);
+                } else {
+                    Budget newBudget = new Budget();
+                    newBudget.setAmount(Integer.parseInt(amount.getText().toString()));
+                    newBudget.setNote(note.getText().toString());
+                    newBudget.setCategory(category.getText().toString());
+                    DbHelperBudget.addBudget(mContext, newBudget);
+                }
+                updateUI();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        if (isUpdate) {
+            builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    DbHelperBudget.deleteBudget(mContext, String.valueOf(budget.getId()));
+                    updateUI();
+                }
+            });
+        }
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+    }
 }

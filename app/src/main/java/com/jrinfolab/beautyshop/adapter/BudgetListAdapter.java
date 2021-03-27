@@ -1,7 +1,6 @@
 package com.jrinfolab.beautyshop.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.imageview.ShapeableImageView;
 import com.jrinfolab.beautyshop.R;
-import com.jrinfolab.beautyshop.helper.Constant;
-import com.jrinfolab.beautyshop.pojo.Category;
-import com.jrinfolab.beautyshop.ui.ImageViewer;
+import com.jrinfolab.beautyshop.pojo.Budget;
 
 import java.util.List;
 
-public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapter.MyViewHolder> {
+public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.MyViewHolder> {
 
-    List<Category> categories;
+    List<Budget> transactionList;
     Context context;
     ItemClickListener itemClickListener;
 
-    public CategoryListAdapter(Context context, List<Category> categories, ItemClickListener itemClickListener) {
+    public BudgetListAdapter(Context context, List<Budget> transactionList, ItemClickListener itemClickListener) {
         this.context = context;
-        this.categories = categories;
+        this.transactionList = transactionList;
         this.itemClickListener = itemClickListener;
     }
 
@@ -37,20 +33,24 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.row_category_list, parent, false);
+        View view = inflater.inflate(R.layout.row_budget_list, parent, false);
         MyViewHolder viewHolder = new MyViewHolder(view);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        final Category category = categories.get(position);
-        holder.name.setText(category.getName());
-        int roundColor = category.getType() == 0 ? R.color.color_error : R.color.color_verified ;
-        int drawable = category.getType() == 0 ? R.drawable.ic_category_expense : R.drawable.ic_category_income ;
+        final Budget transaction = transactionList.get(position);
+
+        int roundColor = transaction.getType() == 0 ? R.color.color_error : R.color.color_verified;
+        int drawable = transaction.getType() == 0 ? R.drawable.ic_category_expense : R.drawable.ic_category_income;
 
         holder.icon.setImageDrawable(context.getResources().getDrawable(drawable, null));
-         holder.icon.setColorFilter(ContextCompat.getColor(context, roundColor) );
+        holder.icon.setColorFilter(ContextCompat.getColor(context, roundColor));
+
+        holder.amount.setText("Rs " + transaction.getAmount());
+        holder.category.setText(transaction.getCategory());
+        holder.note.setText(transaction.getNote());
 
         holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,18 +62,20 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return transactionList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout rootLayout;
-        TextView name;
+        TextView category, note, amount;
         ImageView icon;
 
         public MyViewHolder(@NonNull View view) {
             super(view);
-            name = view.findViewById(R.id.name);
+            category = view.findViewById(R.id.category);
+            note = view.findViewById(R.id.note);
+            amount = view.findViewById(R.id.amount);
             icon = view.findViewById(R.id.icon);
             rootLayout = view.findViewById(R.id.root_layout);
         }
